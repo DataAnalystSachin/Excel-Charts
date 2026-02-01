@@ -6,9 +6,9 @@
     <script src='https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #121212; color: #ffffff; }
-        .chart-container { width: 1000px; height: 600px; margin: 40px auto; padding: 30px; background: #1e1e1e; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border: 1px solid #444444; }
-        .chart-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 25px; color: #ffffff; }
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f8f9fa; color: #333333; }
+        .chart-container { width: 1000px; height: 600px; margin: 40px auto; padding: 30px; background: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border: 1px solid #cccccc; }
+        .chart-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 25px; color: #333333; }
     </style>
 </head>
 <body>
@@ -21,7 +21,7 @@
     var currentTitle = 'Sales';
     var currentXName = 'Month';
     var currentYName = 'Value';
-    const darkColors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#f7fff7', '#ff9f1c'];
+    const colors = ['#c23531', '#2f4554', '#61a0a8', '#d48265', '#91c7ae'];
         var myChart = echarts.init(document.getElementById('chartBox'), null, {renderer: 'canvas'});
         var toolboxFeatures = {
              myEditLabels: {
@@ -56,7 +56,7 @@
                  onclick: function() {
                      myChart.setOption({ toolbox: { show: false } });
                      setTimeout(function() {
-                         html2canvas(document.querySelector('.chart-container'), {backgroundColor: '#1e1e1e'}).then(function(canvas) {
+                         html2canvas(document.querySelector('.chart-container'), {backgroundColor: '#ffffff'}).then(function(canvas) {
                              var a = document.createElement('a');
                              a.href = canvas.toDataURL('image/png');
                              a.download = currentFilename.replace('.html', '.png');
@@ -67,51 +67,50 @@
                  }
              },
              restore: { show: true, title: 'Restore' },
-             dataView: { show: true, title: 'Data View', readOnly: false, backgroundColor: '#1e1e1e', textareaColor: '#2d2d2d', textareaBorderColor: '#444', textColor: '#ffffff' },
+             dataView: { show: true, title: 'Data View' },
              magicType: { show: true, type: ['line', 'bar', 'stack'], title: { line: 'Switch to Line', bar: 'Switch to Bar', stack: 'Stack', tiled: 'Tile' }, option: { bar: { label: { show: true } } } }
         };
         var option = {
-            backgroundColor: '#1e1e1e',
+            backgroundColor: '#ffffff',
+            color: colors,
             animation: true,
             title: { show: false, text: currentTitle },
             tooltip: {
                 show: true, trigger: 'item', 
                 axisPointer: { type: 'none' }, 
-                textStyle: {fontSize: 14, color: '#ffffff'}, borderWidth: 0, padding: 5,
-                backgroundColor: 'rgba(30, 30, 30, 0.9)', borderColor: '#444', borderWidth: 1
+                textStyle: {fontSize: 14, color: '#333333'}, borderWidth: 0, padding: 5,
             },
             toolbox: {
                 show: true, orient: 'horizontal', itemSize: 15, itemGap: 10, left: '75%',
                 feature: toolboxFeatures,
-                iconStyle: { borderColor: '#cccccc' }
             },
             legend: {
                 show: true, type: 'scroll', left: 'center', top: 'top', padding: [0,0,20,0], itemGap: 10,
-                textStyle: { fontFamily: 'Arial', fontSize: 12, color: '#ffffff' },
-                pageIconColor: '#9a60b4', pageIconInactiveColor: '#aaa'
+                textStyle: { fontFamily: 'Arial', fontSize: 12, color: '#333333' },
+                pageIconColor: '#2f4554', pageIconInactiveColor: '#aaa'
             },
-            grid: { left: '5%', right: '12%', top: '60', bottom: '15%', containLabel: true, borderColor: '#444444' },
+            grid: { left: '5%', right: '12%', top: '60', bottom: '15%', containLabel: true, borderColor: '#cccccc' },
             xAxis: [{
                 type: 'category', name: currentXName, nameLocation: 'end', nameGap: 15,
-                data: ["January","February","March","April","May","June","July","August","September","October","November","December"],
-                nameTextStyle: { color: '#ffffff', fontWeight: 'bold' },
-                axisLabel: { show: true, rotate: 0, margin: 8, fontSize: 12, fontWeight: 'bold', fontFamily: 'Arial', color: '#cccccc' },
+                data: ["Apr","Aug","Dec","Feb","Jan","Jul","Jun","Mar","May","Nov","Oct","Sep"],
+                nameTextStyle: { color: '#333333', fontWeight: 'bold' },
+                axisLabel: { show: true, rotate: 0, margin: 8, fontSize: 12, fontWeight: 'bold', fontFamily: 'Arial', color: '#333333' },
                 axisLine: { show: true, lineStyle: { color: '#408080', width: 2 } },
                 axisTick: { show: true, alignWithLabel: true },
                 splitLine: { show: false }
             }],
             yAxis: [{
                 type: 'value', name: currentYName, nameLocation: 'end', nameGap: 15,
-                nameTextStyle: { color: '#ffffff', fontWeight: 'bold' },
-                axisLabel: { show: true, fontSize: 12, fontWeight: 'bold', fontFamily: 'Arial', color: '#cccccc' },
+                nameTextStyle: { color: '#333333', fontWeight: 'bold' },
+                axisLabel: { show: true, fontSize: 12, fontWeight: 'bold', fontFamily: 'Arial', color: '#333333' },
                 axisLine: { show: false },
                 axisTick: { show: false },
-                splitLine:{show:true,lineStyle:{width:1,opacity:1,type:'solid',color:'#333333'}}            }],
+                splitLine:{show:true,lineStyle:{width:1,opacity:1,type:'solid',color:'#e0e0e0'}}            }],
             dataZoom: [
-                { type: 'slider', show: true, start: 0, end: 100, backgroundColor: '#2d2d2d', borderColor: '#444', dataBackground: { lineStyle: {color: '#444'}, areaStyle: {color: '#444'} }, selectedDataBackground: { lineStyle: {color: '#888'}, areaStyle: {color: '#888'} }, handleStyle: { color: '#5470c6' }, textStyle: { color: '#cccccc' } },
+                { type: 'slider', show: true, start: 0, end: 100,  },
                 { type: 'inside', show: true, start: 0, end: 100 }
             ],
-            series: [{type: 'line', name: "Total Sales 2016", smooth: true, symbol: 'circle', symbolSize: 6, lineStyle: { width: 2 }, barGap: '10%', barCategoryGap: '20%', label: {  show: false,  position: 'top',  margin: 8,  fontFamily: 'Arial',  fontSize: 10,  color: '#ffffff',  formatter: function(params) { var currency_symbol = '\u20B9'; var number = params.value; if(number < 1000) { return currency_symbol + number.toFixed(0); } var magnitude = Math.floor((Math.log(number) / Math.log(1000))); var result = currency_symbol + (number / Math.pow(1000, magnitude)).toFixed(1) + ['', 'K', 'M', 'B', 'T'][magnitude]; return result;}}, data: [159966.159,115579.6824,213188.0986,106142.8618,102670.4726,125343.4126,117666.8005,193413.629,180751.834,166373.7404,231130.3458,143849.1484], itemStyle: { color: darkColors[0] }},{type: 'line', name: "SPL", smooth: true, symbol: 'circle', symbolSize: 6, lineStyle: { width: 2 }, barGap: '10%', barCategoryGap: '20%', label: {  show: false,  position: 'top',  margin: 8,  fontFamily: 'Arial',  fontSize: 10,  color: '#ffffff',  formatter: function(params) { var currency_symbol = '\u20B9'; var number = params.value; if(number < 1000) { return currency_symbol + number.toFixed(0); } var magnitude = Math.floor((Math.log(number) / Math.log(1000))); var result = currency_symbol + (number / Math.pow(1000, magnitude)).toFixed(1) + ['', 'K', 'M', 'B', 'T'][magnitude]; return result;}}, data: [92906.389,158478.57,116041.026,116757.647,164234.2772,103156.079,106316.483,119383.3914,102841.3242,130665.835,168279.524,185113.339], itemStyle: { color: darkColors[1] }}]
+            series: [{type: 'line', name: "Total Sales", smooth: true, symbol: 'circle', symbolSize: 6, lineStyle: { width: 2 }, barGap: '10%', barCategoryGap: '20%', label: {  show: false,  position: 'top',  margin: 8,  fontFamily: 'Arial',  fontSize: 10,  color: '#333333',  formatter: function(params) { var currency_symbol = '\u20B9'; var number = params.value; if(number < 1000) { return currency_symbol + number.toFixed(0); } var magnitude = Math.floor((Math.log(number) / Math.log(1000))); var result = currency_symbol + (number / Math.pow(1000, magnitude)).toFixed(1) + ['', 'K', 'M', 'B', 'T'][magnitude]; return result;}}, data: [116757.647,119383.3914,185113.339,158478.57,92906.389,106316.483,103156.079,116041.026,164234.2772,168279.524,130665.835,102841.3242]},{type: 'line', name: "Samer Period Last Year", smooth: true, symbol: 'circle', symbolSize: 6, lineStyle: { width: 2 }, barGap: '10%', barCategoryGap: '20%', label: {  show: false,  position: 'top',  margin: 8,  fontFamily: 'Arial',  fontSize: 10,  color: '#333333',  formatter: function(params) { var currency_symbol = '\u20B9'; var number = params.value; if(number < 1000) { return currency_symbol + number.toFixed(0); } var magnitude = Math.floor((Math.log(number) / Math.log(1000))); var result = currency_symbol + (number / Math.pow(1000, magnitude)).toFixed(1) + ['', 'K', 'M', 'B', 'T'][magnitude]; return result;}}, data: [88695.893,129184.368,129291.6856,57375.173,77025.8804,70921.991,71246.3742,113288.859,70920.0725,131260.8553,85856.466,171932.319]}]
         };
         myChart.setOption(option);
         window.addEventListener('resize', function() { myChart.resize(); });
