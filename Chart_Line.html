@@ -19,7 +19,7 @@
     <script>
     var currentFilename = 'Chart_Line.html';
     var currentTitle = 'Sales';
-    var currentXName = 'Month';
+    var currentXName = 'Category';
     var currentYName = 'Value';
     const colors = ['#c23531', '#2f4554', '#61a0a8', '#d48265', '#91c7ae'];
         var myChart = echarts.init(document.getElementById('chartBox'), null, {renderer: 'canvas'});
@@ -92,7 +92,7 @@
             grid: { left: '5%', right: '12%', top: '60', bottom: '15%', containLabel: true, borderColor: '#cccccc' },
             xAxis: [{
                 type: 'category', name: currentXName, nameLocation: 'end', nameGap: 15,
-                data: ["Apr","Aug","Dec","Feb","Jan","Jul","Jun","Mar","May","Nov","Oct","Sep"],
+                data: ["January","Febuary","March","Aprl","May","June","July","August","September","Octoumber","November","December"],
                 nameTextStyle: { color: '#333333', fontWeight: 'bold' },
                 axisLabel: { show: true, rotate: 0, margin: 8, fontSize: 12, fontWeight: 'bold', fontFamily: 'Arial', color: '#333333' },
                 axisLine: { show: true, lineStyle: { color: '#408080', width: 2 } },
@@ -110,7 +110,7 @@
                 { type: 'slider', show: true, start: 0, end: 100,  },
                 { type: 'inside', show: true, start: 0, end: 100 }
             ],
-            series: [{type: 'line', name: "Total Sales", smooth: true, symbol: 'circle', symbolSize: 6, lineStyle: { width: 2 }, barGap: '10%', barCategoryGap: '20%', label: {  show: false,  position: 'top',  margin: 8,  fontFamily: 'Arial',  fontSize: 10,  color: '#333333',  formatter: function(params) { var currency_symbol = '\u20B9'; var number = params.value; if(number < 1000) { return currency_symbol + number.toFixed(0); } var magnitude = Math.floor((Math.log(number) / Math.log(1000))); var result = currency_symbol + (number / Math.pow(1000, magnitude)).toFixed(1) + ['', 'K', 'M', 'B', 'T'][magnitude]; return result;}}, data: [116757.647,119383.3914,185113.339,158478.57,92906.389,106316.483,103156.079,116041.026,164234.2772,168279.524,130665.835,102841.3242]},{type: 'line', name: "Samer Period Last Year", smooth: true, symbol: 'circle', symbolSize: 6, lineStyle: { width: 2 }, barGap: '10%', barCategoryGap: '20%', label: {  show: false,  position: 'top',  margin: 8,  fontFamily: 'Arial',  fontSize: 10,  color: '#333333',  formatter: function(params) { var currency_symbol = '\u20B9'; var number = params.value; if(number < 1000) { return currency_symbol + number.toFixed(0); } var magnitude = Math.floor((Math.log(number) / Math.log(1000))); var result = currency_symbol + (number / Math.pow(1000, magnitude)).toFixed(1) + ['', 'K', 'M', 'B', 'T'][magnitude]; return result;}}, data: [88695.893,129184.368,129291.6856,57375.173,77025.8804,70921.991,71246.3742,113288.859,70920.0725,131260.8553,85856.466,171932.319]}]
+            series: [{type: 'line', name: "Min Temp", smooth: true, symbol: 'circle', symbolSize: 6, lineStyle: { width: 2 }, barGap: '10%', barCategoryGap: '20%', label: {  show: false,  position: 'top',  margin: 8,  fontFamily: 'Arial',  fontSize: 10,  color: '#333333',  formatter: function(params) { var currency_symbol = '\u20B9'; var number = params.value; if(number < 1000) { return currency_symbol + number.toFixed(0); } var magnitude = Math.floor((Math.log(number) / Math.log(1000))); var result = currency_symbol + (number / Math.pow(1000, magnitude)).toFixed(1) + ['', 'K', 'M', 'B', 'T'][magnitude]; return result;}}, data: [20,22,35,40,50,60,65,64,55,45,35,25]},{type: 'line', name: "Max Temp", smooth: true, symbol: 'circle', symbolSize: 6, lineStyle: { width: 2 }, barGap: '10%', barCategoryGap: '20%', label: {  show: false,  position: 'top',  margin: 8,  fontFamily: 'Arial',  fontSize: 10,  color: '#333333',  formatter: function(params) { var currency_symbol = '\u20B9'; var number = params.value; if(number < 1000) { return currency_symbol + number.toFixed(0); } var magnitude = Math.floor((Math.log(number) / Math.log(1000))); var result = currency_symbol + (number / Math.pow(1000, magnitude)).toFixed(1) + ['', 'K', 'M', 'B', 'T'][magnitude]; return result;}}, data: [40,42,45,60,70,80,85,84,75,65,55,45]}]
         };
         myChart.setOption(option);
         window.addEventListener('resize', function() { myChart.resize(); });
