@@ -122,7 +122,7 @@
   .footer-brand { font-weight: 800; color: var(--kpi-val-col); background: linear-gradient(135deg, var(--kpi-val-col) 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 14px; }
 </style>
 </head><body class="animated-theme"><style type="text/css" gs-style-id="gs-id-0"></style>
-    <div id="addSlicerModal" class="modal-overlay">
+    <div id="addSlicerModal" class="modal-overlay" style="display: none;">
         <div class="modal-box">
             <div class="modal-title">Add Advanced Slicer</div>
             <div class="modal-body">
@@ -145,7 +145,7 @@
             </div>
         </div>
     </div>
-    <div id="updateDataModal" class="modal-overlay">
+    <div id="updateDataModal" class="modal-overlay" style="display: none;">
         <div class="modal-box">
             <div class="modal-title">Update Dashboard Data</div>
             <div class="modal-body">
@@ -164,7 +164,7 @@
             </div>
         </div>
     </div>
-    <div id="lblModal" class="modal-overlay">
+    <div id="lblModal" class="modal-overlay" style="display: none;">
         <div class="modal-box" style="width: 320px;">
             <div class="modal-title">Label Settings</div>
             <div class="modal-body">
@@ -180,7 +180,7 @@
             </div>
         </div>
     </div>
-    <div id="addKpiModal" class="modal-overlay">
+    <div id="addKpiModal" class="modal-overlay" style="display: none;">
         <div class="modal-box modal-wide" style="width: 500px;">
             <div class="modal-title">Add New KPI</div>
             <div class="modal-body">
@@ -215,7 +215,7 @@
             </div>
         </div>
     </div>
-    <div id="editKpiModal" class="modal-overlay">
+    <div id="editKpiModal" class="modal-overlay" style="display: none;">
         <div class="modal-box modal-wide" style="width: 500px;">
             <div class="modal-title">Edit KPI Settings</div>
             <div class="modal-body">
@@ -250,7 +250,7 @@
             </div>
         </div>
     </div>
-    <div id="createChartModal" class="modal-overlay">
+    <div id="createChartModal" class="modal-overlay" style="display: none;">
         <div class="modal-box modal-wide">
             <div class="modal-title">Create New Chart</div>
             <div class="modal-body">
@@ -309,7 +309,7 @@
             </div>
         </div>
     </div>
-    <div id="editChartModal" class="modal-overlay">
+    <div id="editChartModal" class="modal-overlay" style="display: none;">
         <div class="modal-box modal-wide">
             <div class="modal-title">Edit Chart Settings</div>
             <div class="modal-body">
@@ -368,7 +368,7 @@
             </div>
         </div>
     </div>
-    <div id="layoutModal" class="modal-overlay">
+    <div id="layoutModal" class="modal-overlay" style="display: none;">
         <div class="modal-box modal-wide" style="width: 750px;">
             <div class="modal-title">Professional Layout Builder</div>
             <div class="modal-body">
@@ -398,51 +398,7 @@
             <div class="modal-footer"><button class="btn-secondary" onclick="closeModals()">Cancel</button></div>
         </div>
     </div>
-    <div id="githubModal" class="modal-overlay" style="display: flex;">
-        <div class="modal-box">
-            <div class="modal-title"><i class="fa-brands fa-github"></i> Deploy to Web</div>
-            <div id="ghFormSection" class="modal-body" style="display: block;">
-                <p style="font-size:12px; color:var(--axis-col); margin-bottom:15px;">Your GitHub details are saved locally in this file.</p>
-                <div class="fmt-row">
-                    <div class="input-group">
-                        <label class="input-label">GitHub Owner</label>
-                        <input type="text" id="ghOwner" class="fmt-input" placeholder="e.g., XLBoosterPro">
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">Repository Name</label>
-                        <input type="text" id="ghRepo" class="fmt-input" placeholder="e.g., Public-insight">
-                    </div>
-                </div>
-                <div class="fmt-row">
-                    <div class="input-group">
-                        <label class="input-label">Branch</label>
-                        <input type="text" id="ghBranch" class="fmt-input" value="main">
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">Access Token</label>
-                        <input type="password" id="ghToken" class="fmt-input" placeholder="ghp_... or github_pat_...">
-                    </div>
-                </div>
-                <div class="input-group" style="margin-bottom:15px;">
-                    <label class="input-label">Live Base URL (Optional)</label>
-                    <input type="text" id="ghBaseUrl" class="fmt-input" placeholder="e.g., https://xlboosterpro.github.io/Public-insight/">
-                </div>
-            </div>
-            <div id="ghSuccessSection" class="modal-body" style="display:none; text-align:center; padding:20px 0;">
-                <i class="fa-solid fa-circle-check" style="font-size:50px; color:#10b981; margin-bottom:15px;"></i>
-                <h3 style="margin-bottom:10px;">Deployed Successfully!</h3>
-                <p style="font-size:12px; color:var(--axis-col); margin-bottom:20px;">GitHub Pages takes 1-2 minutes to update the live site.</p>
-                <a id="ghLiveLink" href="#" target="_blank" style="display:inline-block; background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:white; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold; transition:0.2s;"><i class="fa-solid fa-globe"></i> View Live Dashboard</a>
-            </div>
-            <div class="modal-footer" id="ghFooter" style="display: flex;">
-                <button class="btn-secondary" onclick="closeModals()">Cancel</button>
-                <button id="btnDeployGh" class="btn-primary" style="background:linear-gradient(135deg, #24292e 0%, #000000 100%);" onclick="deployToGithub()" disabled="">Deploying... <i class="fa-solid fa-spinner fa-spin"></i></button>
-            </div>
-            <div class="modal-footer" id="ghSuccessFooter" style="display:none; justify-content:center;">
-                <button class="btn-secondary" style="width:100%;" onclick="closeModals()">Close Window</button>
-            </div>
-        </div>
-    </div>
+    
 <div class="dash-header">
   <div class="header-top">
     <div style="display: flex; align-items: center; gap: 15px;">
@@ -457,7 +413,7 @@
       <button class="btn-save btn-create" onclick="openCreateChartModal()">+ Add Chart</button>
       <button class="btn-save btn-slicer" onclick="openAddSlicer()">+ Add Slicer</button>
       <button class="btn-save btn-export" onclick="saveDashboard()">Save HTML</button>
-      <button class="btn-save" style="background: linear-gradient(135deg, #24292e 0%, #040404 100%); box-shadow: 0 2px 10px rgba(36,41,46,0.3);" onclick="openGithubModal()"><i class="fa-brands fa-github"></i> Deploy to Web</button>
+      
       <button class="btn-save" style="background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);" onclick="resetFilters()">Reset Filters</button>
     </div>
   </div>
@@ -465,7 +421,7 @@
 <div id="canvas-container"></div>
 <div class="slicer-container" id="slicerContainer" style="display:none;"></div>
 <div class="grid-stack gs-12 gs-id-0 grid-stack-static grid-stack-animate" id="mainGrid" gs-static="true" gs-current-row="6" style="height: 480px;"></div>
-    <div id="logoModal" class="modal-overlay">
+    <div id="logoModal" class="modal-overlay" style="display: none;">
         <div class="modal-box">
             <div class="modal-title">Set Company Logo</div>
             <div class="modal-body">
@@ -1323,11 +1279,13 @@ async function deployToGithub() {
     let aiConfigStr = JSON.stringify(safeConfig);
     let rawDataStr = JSON.stringify(rawData);
     let clone = document.documentElement.cloneNode(true);
+    let ghBtn = clone.querySelector('button[onclick="openGithubModal()"]');
+    if(ghBtn) ghBtn.remove();
     let mg = clone.querySelector('#mainGrid'); if(mg) mg.innerHTML = '';
     let sc = clone.querySelector('#slicerContainer'); if(sc) sc.innerHTML = '';
     let cc = clone.querySelector('#canvas-container'); if(cc) cc.innerHTML = '';
     let bodyDivs = clone.querySelectorAll('body > div');
-    let keepIds =['logoModal', 'layoutModal', 'addSlicerModal', 'lblModal', 'addKpiModal', 'editKpiModal', 'editChartModal', 'createChartModal', 'updateDataModal', 'githubModal', 'slicerContainer', 'mainGrid', 'canvas-container'];
+    let keepIds =['logoModal', 'layoutModal', 'addSlicerModal', 'lblModal', 'addKpiModal', 'editKpiModal', 'editChartModal', 'createChartModal', 'updateDataModal', 'slicerContainer', 'mainGrid', 'canvas-container'];
     bodyDivs.forEach(d => { if (d.id && !keepIds.includes(d.id) && !d.classList.contains('dash-header') && !d.classList.contains('dash-footer')) d.remove(); });
     let html = clone.outerHTML;
     let sM = '/*--AICONFIG_START--*/', eM = '/*--AICONFIG_END--*/'; let sIdx = html.indexOf(sM), eIdx = html.indexOf(eM);
