@@ -1,0 +1,1874 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Sheet2 | Data Export</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://cdn.datatables.net">
+  <link rel="preconnect" href="https://code.jquery.com">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.bootstrap5.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.8.1/css/searchBuilder.bootstrap5.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.4/css/dataTables.dateTime.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/2.3.3/css/searchPanes.bootstrap5.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/select/2.1.0/css/select.bootstrap5.min.css">
+  <style>
+    /* ===== Base Styles ===== */
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3a0ca3;
+      --accent-color: #4cc9f0;
+      --text-primary: #212529;
+      --text-secondary: #6c757d;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --border-color: #dee2e6;
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    body.dark-mode {
+      --primary-color: #2F80ED;
+      --secondary-color: #0F2A4D;
+      --accent-color: #4cc9f0;
+      --text-primary: #E6ECFF;
+      --text-secondary: #A9B4D0;
+      --bg-primary: #141E3C;
+      --bg-secondary: #0B132B;
+      --border-color: #2A3B6A;
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    
+    body {
+      background: var(--bg-secondary);
+      min-height: 100vh;
+      transition: all 0.3s ease;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding-bottom: 2rem;
+    }
+    
+    body.dark-mode::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 50%, rgba(47, 128, 237, 0.05) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(15, 42, 77, 0.03) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    /* ===== Main Container ===== */
+    .main-container {
+      padding: 1.5rem;
+      max-width: 1800px;
+      margin: 0 auto;
+    }
+    
+    /* ===== Dashboard Card ===== */
+    .dashboard-card {
+      background: var(--bg-primary);
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    body.dark-mode .dashboard-card {
+      background-color: var(--bg-primary) !important;
+      border: 1px solid var(--border-color) !important;
+      color: var(--text-primary) !important;
+    }
+    
+    /* ===== Card Header ===== */
+    .card-header-pro {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      padding: 1.25rem 1.5rem;
+      color: white;
+    }
+    
+    body.dark-mode .card-header-pro {
+      background: linear-gradient(180deg, var(--secondary-color) 0%, #0B132B 100%) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+    }
+    
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    
+    .header-left h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      line-height: 1.2;
+    }
+    
+    body.dark-mode .header-left h1 {
+      color: var(--text-primary) !important;
+    }
+    
+    .subtitle {
+      opacity: 0.85;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.9);
+      margin-top: 0.3rem;
+      font-weight: 400;
+    }
+    
+    body.dark-mode .subtitle {
+      color: var(--text-secondary) !important;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .branding-link {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.8rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.6rem;
+      background: rgba(255,255,255,0.1);
+      border-radius: 6px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .branding-link:hover {
+      color: white;
+      background: rgba(255,255,255,0.2);
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+    
+    /* ===== Theme Switch ===== */
+    .theme-switch-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    body.dark-mode .theme-switch-container {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .theme-label {
+      color: rgba(255,255,255,0.95);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    
+    .theme-label .bi-moon-fill { display: inline; }
+    .theme-label .bi-sun-fill { display: none; }
+    body.dark-mode .theme-label .bi-moon-fill { display: none; }
+    body.dark-mode .theme-label .bi-sun-fill { display: inline; }
+    
+    .theme-switch {
+      position: relative;
+      width: 46px;
+      height: 24px;
+    }
+    
+    .theme-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .theme-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.3);
+      border-radius: 34px;
+      transition: 0.4s;
+    }
+    
+    body.dark-mode .theme-switch input:checked + .theme-slider {
+      background: var(--primary-color);
+    }
+    
+    .theme-slider:before {
+      position: absolute;
+      content: '';
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.4s;
+    }
+    
+    .theme-switch input:checked + .theme-slider {
+      background: rgba(255,255,255,0.5);
+    }
+    
+    .theme-switch input:checked + .theme-slider:before {
+      transform: translateX(22px);
+    }
+    
+    /* ===== Stats Bar (Compact) ===== */
+    .stats-bar {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.1);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: background 0.2s;
+    }
+    
+    .stat-item:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    body.dark-mode .stats-bar .stat-item {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      color: var(--text-primary) !important;
+    }
+    
+    .stat-value {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    
+    body.dark-mode .stat-value {
+      color: var(--primary-color) !important;
+    }
+    
+    /* ===== Table Wrapper ===== */
+    .table-wrapper {
+      padding: 0 1.5rem 1.5rem 1.5rem;
+    }
+    
+    .table-scroll-container {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+    }
+    
+    #dataTable {
+      font-size: 0.9rem;
+      margin: 0;
+      width: 100% !important;
+    }
+    
+    #dataTable thead th, #dataTable tbody td {
+      white-space: nowrap !important;
+    }
+    
+    #dataTable thead th {
+      background: var(--secondary-color) !important;
+      color: white !important;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      padding: 0.85rem 1rem;
+      border-bottom: none;
+    }
+    
+    #dataTable tbody td {
+      padding: 0.6rem 1rem;
+      border-color: var(--border-color);
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+    
+    /* ===== DARK MODE OVERRIDES ===== */
+    /* 1. General Table Colors */
+    body.dark-mode #dataTable {
+      --bs-table-color: #E6ECFF;
+      --bs-table-bg: #0B132B;
+      --bs-table-border-color: #2A3B6A;
+      --bs-table-striped-bg: #141E3C;
+      --bs-table-striped-color: #E6ECFF;
+      --bs-table-active-bg: #1F2D5C;
+      --bs-table-active-color: #E6ECFF;
+      --bs-table-hover-bg: #1F2D5C;
+      --bs-table-hover-color: #E6ECFF;
+      color: #E6ECFF !important;
+      background-color: #0B132B !important;
+    }
+    
+    /* 2. Global Input Fields (Search, Page Length) */
+    body.dark-mode .dataTables_wrapper .dataTables_filter input,
+    body.dark-mode .dataTables_wrapper .dataTables_length select,
+    body.dark-mode .form-control,
+    body.dark-mode .form-select {
+      background-color: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid var(--border-color) !important;
+      color: #ffffff !important;
+    }
+    /* Fix for Placeholder Text (Search all columns...) */
+    body.dark-mode input::placeholder { color: rgba(255, 255, 255, 0.7) !important; opacity: 1; }
+    
+    /* 3. Column Header Filters (Specific Fix) */
+    body.dark-mode .filter-box input, body.dark-mode .filter-box select {
+      background-color: rgba(255, 255, 255, 0.12) !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      color: #ffffff !important;
+    }
+    body.dark-mode .filter-box input::placeholder { color: rgba(255, 255, 255, 0.6) !important; }
+    
+    /* 4. Pagination (No White Box) */
+    body.dark-mode .page-link {
+      background-color: var(--bg-secondary) !important;
+      border-color: var(--border-color) !important;
+      color: var(--text-primary) !important;
+    }
+    body.dark-mode .page-item.disabled .page-link {
+      background-color: rgba(255, 255, 255, 0.05) !important;
+      border-color: var(--border-color) !important;
+      color: var(--text-secondary) !important;
+    }
+    body.dark-mode .page-item.active .page-link {
+      background-color: var(--primary-color) !important;
+      border-color: var(--primary-color) !important;
+      color: white !important;
+    }
+    body.dark-mode .page-link:hover {
+      background-color: var(--primary-color) !important;
+      border-color: var(--primary-color) !important;
+      color: white !important;
+    }
+    
+    /* 5. Table Striping & Hover */
+    body.dark-mode #dataTable tbody tr:nth-of-type(odd) {
+      background-color: rgba(255, 255, 255, 0.03) !important;
+      color: var(--text-primary) !important;
+    }
+    body.dark-mode #dataTable tbody tr:nth-of-type(even) {
+      background-color: #0B132B !important;
+      color: var(--text-primary) !important;
+    }
+    body.dark-mode #dataTable tbody tr:hover {
+      background-color: #1F2D5C !important;
+    }
+    body.dark-mode #dataTable tbody td, body.dark-mode #dataTable tbody th {
+      background-color: transparent !important;
+      color: inherit !important;
+      border-color: var(--border-color) !important;
+    }
+    body.dark-mode table.dataTable.display tbody tr > .sorting_1,
+    body.dark-mode table.dataTable.order-column.stripe tbody tr > .sorting_1,
+    body.dark-mode table.dataTable.stripe tbody tr > .sorting_1 {
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+    
+    /* Helper Classes */
+    .text-end { text-align: right !important; }
+    .text-muted { color: var(--text-secondary) !important; }
+    body.dark-mode .text-muted { color: #A9B4D0 !important; }
+    .font-monospace { font-family: 'SFMono-Regular', Consolas, monospace; }
+    
+    /* ===== Footer Bar ===== */
+    .footer-bar {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+    }
+    
+    body.dark-mode .footer-bar {
+      background: var(--secondary-color) !important;
+      border-top: 1px solid var(--border-color) !important;
+    }
+    
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .footer-text, body.dark-mode .footer-text {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+    
+    .powered-by {
+      color: var(--primary-color);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    
+    .powered-by:hover {
+      color: var(--secondary-color);
+      text-decoration: underline;
+      transform: translateY(-1px);
+    }
+    
+    body.dark-mode .powered-by {
+      color: var(--primary-color) !important;
+    }
+    
+    /* ===== DataTables Customization & Dark Mode Extensions ===== */
+    .dt-buttons .btn {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+      margin-right: 5px;
+      border-radius: 6px;
+      padding: 0.375rem 0.75rem;
+      font-size: 0.875rem;
+    }
+    
+    .dt-buttons .btn:hover {
+      background: var(--secondary-color);
+      border-color: var(--secondary-color);
+      transform: translateY(-1px);
+    }
+    
+    body.dark-mode .dt-buttons .btn {
+      background: linear-gradient(135deg, var(--secondary-color), var(--bg-secondary)) !important;
+      border: 1px solid var(--border-color) !important;
+      color: var(--text-primary) !important;
+    }
+    
+    body.dark-mode .dt-buttons .btn:hover {
+      background: linear-gradient(135deg, #1F2D5C, var(--bg-primary)) !important;
+      border-color: var(--primary-color) !important;
+    }
+    
+    /* COLVIS DROPDOWN (Dark Mode) */
+    body.dark-mode div.dt-button-collection {
+      background-color: #0B132B !important;
+      border: 1px solid #2A3B6A !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    body.dark-mode div.dt-button-collection .dt-button {
+      background: transparent !important;
+      color: #E6ECFF !important;
+    }
+    body.dark-mode div.dt-button-collection .dt-button.active {
+      background: var(--primary-color) !important;
+      color: white !important;
+    }
+    body.dark-mode div.dt-button-background {
+      background: rgba(0,0,0,0.7) !important;
+    }
+    
+    /* SEARCH BUILDER (Dark Mode) */
+    body.dark-mode .dtsb-searchBuilder, body.dark-mode .dtsb-group, body.dark-mode .dtsb-criteria {
+      background-color: #0B132B !important;
+      color: #E6ECFF !important;
+    }
+    body.dark-mode .dtsb-titleRow {
+      color: #E6ECFF !important;
+    }
+    body.dark-mode .dtsb-input {
+      background-color: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid #2A3B6A !important;
+      color: #E6ECFF !important;
+    }
+    body.dark-mode .dtsb-button {
+      background: rgba(255, 255, 255, 0.05) !important;
+      color: #E6ECFF !important;
+      border: 1px solid #2A3B6A !important;
+    }
+    body.dark-mode .dtsb-button:hover {
+      background: var(--primary-color) !important;
+      color: white !important;
+    }
+    
+    /* FIX: COPY DIALOG - Single Color Matches Site Background */
+    body.dark-mode div.dt-button-info {
+      background-color: #0B132B !important;
+      border: 1px solid #2A3B6A !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
+      color: #ffffff !important;
+    }
+    body.dark-mode div.dt-button-info h2 {
+      background-color: #0B132B !important;
+      color: #ffffff !important;
+      border-bottom: 1px solid #2A3B6A !important;
+    }
+    body.dark-mode div.dt-button-info div {
+      color: #E6ECFF !important;
+    }
+    .custom-control-bar {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+    body.dark-mode .custom-control-bar {
+      background-color: #141E3C;
+      border-color: #2A3B6A;
+    }
+    .custom-table-info {
+      font-size: 0.85rem; font-weight: 600; color: var(--primary-color);
+      background: rgba(67, 97, 238, 0.1); border: 1px solid rgba(67, 97, 238, 0.2);
+      transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
+    }
+    body.dark-mode .custom-table-info {
+      color: var(--accent-color); background: rgba(76, 201, 240, 0.1); border-color: rgba(76, 201, 240, 0.2);
+    }
+    .custom-table-info.zero-records {
+      color: #dc3545 !important; background: rgba(220, 53, 69, 0.1) !important; border-color: rgba(220, 53, 69, 0.2) !important;
+    }
+    body.dark-mode .custom-table-info.zero-records {
+      color: #ff6b6b !important; background: rgba(255, 107, 107, 0.15) !important; border-color: rgba(255, 107, 107, 0.3) !important;
+    }
+    /* Puraane (Default) Search aur Info ko hide karein */
+    .dataTables_filter, .dataTables_info, .dt-search, .dt-info { display: none !important; }
+    
+    
+    /* ===== Scrollbar Styles ===== */
+    body.dark-mode ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    body.dark-mode ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 4px;
+    }
+    body.dark-mode ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+    body.dark-mode ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-color);
+    }
+    
+    /* ===== ROBUST RESPONSIVE DESIGN (Mobile First Approach) ===== */
+    /* Tablet and smaller */
+    @media (max-width: 992px) {
+      .main-container { padding: 1rem; }
+      .header-top { flex-direction: column; gap: 1rem; }
+      .header-left, .header-right { width: 100%; justify-content: space-between; }
+      .header-right { margin-top: 0.5rem; }
+    }
+    
+    /* Mobile Phones */
+    @media (max-width: 768px) {
+      /* Layout Adjustments */
+      .main-container { padding: 0.5rem; }
+      .dashboard-card { border-radius: 12px; }
+      .card-header-pro { padding: 1rem; }
+      .table-wrapper { padding: 0.5rem 0.5rem 1rem 0.5rem; }
+      
+      /* Header Elements */
+      .header-left h1 { font-size: 1.2rem; }
+      .stats-bar { gap: 0.5rem; }
+      .stat-item { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+      
+      /* DataTables Elements Stacking */
+      .dataTables_wrapper .dt-buttons {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+        white-space: nowrap;
+      }
+      
+      .dataTables_wrapper .dataTables_filter {
+        margin-top: 0.5rem;
+        text-align: left;
+      }
+      
+      .dataTables_wrapper .dataTables_filter input {
+        width: 100% !important;
+        margin-left: 0 !important;
+      }
+      
+      /* Pagination Stacking */
+      .dataTables_wrapper .dataTables_paginate {
+        text-align: center !important;
+        margin-top: 1rem !important;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .dataTables_wrapper .dataTables_info {
+        text-align: center !important;
+        padding-top: 0.5rem !important;
+      }
+      
+      /* Footer Stacking */
+      .footer-content { flex-direction: column; gap: 0.75rem; text-align: center; }
+    }
+    /* Premium Inputs */
+    .filter-box input, .filter-box select {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      background-color: var(--bg-secondary);
+      transition: all 0.3s ease;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .filter-box input:focus, .filter-box select:focus {
+      background-color: var(--bg-primary);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+      outline: none;
+    }
+    body.dark-mode .filter-box input:focus, body.dark-mode .filter-box select:focus {
+      border-color: var(--accent-color) !important;
+      box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.25) !important;
+    }
+    /* Active Filters Tags Container */
+    #activeFiltersContainer {
+      background: rgba(0,0,0,0.02);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px dashed var(--border-color);
+      margin-bottom: 1rem;
+      display: none; /* Hidden by default */
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+    body.dark-mode #activeFiltersContainer {
+      background: rgba(255,255,255,0.03);
+    }
+    .filter-chip {
+      font-size: 12px; font-weight: 600; padding: 6px 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 50px;
+    }
+    .filter-chip i { font-size: 14px; opacity: 0.7; transition: 0.2s; }
+    .filter-chip i:hover { opacity: 1; transform: scale(1.1); }
+    /* 1. Fix Dropdown List Options (Options ke andar ka background solid dark karein) */
+    body.dark-mode select option {
+      background-color: #0B132B !important;
+      color: #E6ECFF !important;
+    }
+    
+    /* 2. Column Header Dropdowns & Textboxes */
+    body.dark-mode .filter-box select,
+    body.dark-mode .filter-box input {
+      background-color: #141E3C !important;
+      color: #ffffff !important;
+      border: 1px solid #2A3B6A !important;
+    }
+    
+    /* 3. SearchBuilder Dialog & All UI Elements */
+    body.dark-mode .dtsb-searchBuilder,
+    body.dark-mode .dtsb-group,
+    body.dark-mode .dtsb-logicContainer,
+    body.dark-mode .dtsb-criteria {
+      background-color: #0B132B !important;
+      border-color: #2A3B6A !important;
+      color: #E6ECFF !important;
+    }
+    
+    body.dark-mode .dtsb-searchBuilder select,
+    body.dark-mode .dtsb-searchBuilder input {
+      background-color: #141E3C !important;
+      color: #ffffff !important;
+      border: 1px solid #2A3B6A !important;
+    }
+    
+    /* SearchBuilder specific buttons and icons */
+    body.dark-mode .dtsb-clear {
+      color: #E6ECFF !important;
+    }
+    body.dark-mode .dtsb-button {
+      background-color: #1F2D5C !important;
+      color: #ffffff !important;
+      border: 1px solid #2A3B6A !important;
+    }
+    body.dark-mode .dtsb-button:hover {
+      background-color: var(--primary-color) !important;
+      color: #ffffff !important;
+    }
+    
+    /* 4. Global Dropdowns (Jaise Page Length dropdown) */
+    body.dark-mode .dataTables_length select,
+    body.dark-mode .form-select {
+      background-color: #141E3C !important;
+      color: #ffffff !important;
+      border: 1px solid #2A3B6A !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <div class="dashboard-card">
+      <div class="card-header-pro">
+        <div class="header-top">
+          <div class="header-left">
+            <h1><i class="bi bi-table"></i> Sheet2</h1>
+            <div class="subtitle">Exported from Sheet2 on March 25, 2026 at 04:09 PM</div>
+          </div>
+          <div class="header-right">
+            <a href="https://xlbooster.com/" target="_blank" class="branding-link"><i class="bi bi-lightning-charge-fill"></i> Made with XLBooster</a>
+            <div class="theme-switch-container">
+              <label for="darkModeToggle" class="theme-label">
+                <i class="bi bi-moon-fill"></i>
+                <i class="bi bi-sun-fill"></i>
+              </label>
+              <label class="theme-switch">
+                <input type="checkbox" id="darkModeToggle" >
+                <span class="theme-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="stats-bar">
+          <div class="stat-item"><i class="bi bi-grid-3x3"></i><span class="stat-value">1000</span> Rows</div>
+          <div class="stat-item"><i class="bi bi-layout-three-columns"></i><span class="stat-value">14</span> Columns</div>
+          <div class="stat-item"><i class="bi bi-stars"></i><span class="stat-value">PRO</span> Features</div>
+          <div class="stat-item"><i class="bi bi-calendar"></i><span class="stat-value">25-Mar-2026</span></div>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <div class="table-scroll-container">
+        <table id="dataTable" class="table table-striped table-hover table-bordered" style="width:100%">
+          <thead class="table-dark">
+            <tr>
+              <th>Order_ID</th>
+              <th>Order_Date</th>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Region</th>
+              <th>City</th>
+              <th>State</th>
+              <th>Customer_Name</th>
+              <th>Order_Type</th>
+              <th>Customer_Age</th>
+              <th>Quantity</th>
+              <th>Price_Per_Unit</th>
+              <th>Total_Amount</th>
+              <th>Return</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <div class="footer-content">
+          <div class="footer-left">
+            <span class="footer-text">Data exported from Microsoft Excel</span>
+          </div>
+          <div class="footer-right">
+            <a href="https://xlbooster.com/" target="_blank" class="powered-by"><i class="bi bi-lightning-charge-fill"></i> Made with XLBooster</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.bootstrap5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.colVis.min.js"></script>
+  <script src="https://cdn.datatables.net/searchbuilder/1.8.1/js/dataTables.searchBuilder.min.js"></script>
+  <script src="https://cdn.datatables.net/searchbuilder/1.8.1/js/searchBuilder.bootstrap5.min.js"></script>
+  <script src="https://cdn.datatables.net/datetime/1.5.4/js/dataTables.dateTime.min.js"></script>
+  <script src="https://cdn.datatables.net/searchpanes/2.3.3/js/dataTables.searchPanes.min.js"></script>
+  <script src="https://cdn.datatables.net/searchpanes/2.3.3/js/searchPanes.bootstrap5.min.js"></script>
+  <script src="https://cdn.datatables.net/select/2.1.0/js/dataTables.select.min.js"></script>
+  <script>
+  var rawData =[
+["ORD0015","01-01-2024","TV","Electronics","South","Hyderabad","Telangana","Rohan Krishnan","COD","56","10","25402","254020","Yes"],
+["ORD0228","01-01-2024","Camera","Electronics","West","Mumbai","Maharashtra","Nitya Kara","COD","29","9","45878","412902","Yes"],
+["ORD0276","01-01-2024","TV","Electronics","West","Pune","Maharashtra","Divij Baria","COD","59","5","1602","8010","No"],
+["ORD0422","01-01-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Kavya Bhatt","Prepaid","34","4","49484","197936","Yes"],
+["ORD0709","01-01-2024","Tablet","Electronics","South","Hyderabad","Telangana","Tushar Khatri","COD","63","4","48937","195748","Yes"],
+["ORD0789","01-01-2024","Smartwatch","Electronics","North","Delhi","Delhi","Aarush Viswanathan","Prepaid","20","3","28690","86070","Yes"],
+["ORD0824","01-01-2024","Laptop","Electronics","South","Hyderabad","Telangana","Tanya Saxena","Prepaid","44","5","16858","84290","Yes"],
+["ORD0196","02-01-2024","TV","Electronics","West","Mumbai","Maharashtra","Raghav Sharma","COD","49","6","42399","254394","Yes"],
+["ORD0312","02-01-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Aarav Lanka","Prepaid","39","2","15986","31972","Yes"],
+["ORD0811","02-01-2024","Mobile","Electronics","East","Kolkata","West Bengal","Vaibhav Rajagopalan","COD","29","8","15412","123296","Yes"],
+["ORD0021","03-01-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Aayush Walla","Prepaid","59","2","24928","49856","Yes"],
+["ORD0100","03-01-2024","Headphones","Electronics","South","Bangalore","Karnataka","Riya Ramakrishnan","Prepaid","23","1","33412","33412","Yes"],
+["ORD0449","03-01-2024","Tablet","Electronics","East","Kolkata","West Bengal","Veer Cheema","Prepaid","65","1","41486","41486","Yes"],
+["ORD0519","03-01-2024","Camera","Electronics","South","Hyderabad","Telangana","Emir Thaker","COD","21","8","33407","267256","No"],
+["ORD0290","04-01-2024","Mobile","Electronics","West","Pune","Maharashtra","Kaira Halder","COD","26","7","18482","129374","Yes"],
+["ORD0444","04-01-2024","TV","Electronics","East","Kolkata","West Bengal","Fateh Bansal","Prepaid","38","4","43357","173428","Yes"],
+["ORD0008","05-01-2024","Camera","Electronics","South","Hyderabad","Telangana","Heer Bahl","COD","32","5","32510","162550","Yes"],
+["ORD0048","05-01-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Kabir Vig","COD","55","4","5460","21840","Yes"],
+["ORD0067","05-01-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Seher Basu","COD","44","3","46107","138321","Yes"],
+["ORD0497","05-01-2024","Laptop","Electronics","North","Delhi","Delhi","Nitya Sekhon","COD","42","4","21904","87616","Yes"],
+["ORD0127","06-01-2024","Headphones","Electronics","South","Bangalore","Karnataka","Zoya Singh","Prepaid","44","8","28050","224400","Yes"],
+["ORD0459","06-01-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Zaina Shankar","COD","45","10","13375","133750","Yes"],
+["ORD0803","06-01-2024","TV","Electronics","North","Delhi","Delhi","Vihaan Thaker","COD","55","7","45637","319459","Yes"],
+["ORD0847","06-01-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Sana Balan","Prepaid","56","6","45674","274044","Yes"],
+["ORD0887","06-01-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Alia Madan","Prepaid","39","10","1780","17800","Yes"],
+["ORD0905","06-01-2024","Camera","Electronics","East","Kolkata","West Bengal","Dishani Jani","COD","34","7","44558","311906","Yes"],
+["ORD0931","06-01-2024","Mobile","Electronics","East","Kolkata","West Bengal","Rasha Krishnan","Prepaid","63","4","17954","71816","Yes"],
+["ORD0147","07-01-2024","Tablet","Electronics","South","Bangalore","Karnataka","Oorja Date","COD","48","8","5566","44528","Yes"],
+["ORD0151","07-01-2024","TV","Electronics","South","Bangalore","Karnataka","Shlok Kapadia","Prepaid","56","8","30841","246728","Yes"],
+["ORD0421","07-01-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Ira Chaudhry","Prepaid","49","10","7690","76900","Yes"],
+["ORD0745","07-01-2024","Mobile","Electronics","East","Kolkata","West Bengal","Kabir Rajagopal","Prepaid","51","9","48104","432936","No"],
+["ORD0930","07-01-2024","Headphones","Electronics","North","Delhi","Delhi","Neysa Mannan","COD","22","1","43833","43833","Yes"],
+["ORD0061","08-01-2024","Headphones","Electronics","East","Kolkata","West Bengal","Alia Jayaraman","Prepaid","60","4","37708","150832","Yes"],
+["ORD0427","08-01-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Rasha Ahuja","Prepaid","52","7","38316","268212","No"],
+["ORD0039","09-01-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Vihaan Gera","Prepaid","61","9","38897","350073","Yes"],
+["ORD0590","09-01-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Pari Bassi","Prepaid","27","3","47687","143061","Yes"],
+["ORD0698","09-01-2024","Laptop","Electronics","South","Bangalore","Karnataka","Zaina Bhalla","Prepaid","38","4","15700","62800","No"],
+["ORD0622","10-01-2024","Camera","Electronics","West","Pune","Maharashtra","Ivana Acharya","Prepaid","54","9","27414","246726","No"],
+["ORD0961","10-01-2024","Headphones","Electronics","East","Kolkata","West Bengal","Abram Iyer","Prepaid","41","7","23102","161714","Yes"],
+["ORD0777","11-01-2024","Camera","Electronics","West","Pune","Maharashtra","Saira Basu","Prepaid","26","5","31164","155820","Yes"],
+["ORD0187","12-01-2024","Camera","Electronics","West","Mumbai","Maharashtra","Eva Dhaliwal","COD","49","2","35936","71872","No"],
+["ORD0363","12-01-2024","Headphones","Electronics","South","Bangalore","Karnataka","Uthkarsh Chhabra","COD","65","6","28942","173652","Yes"],
+["ORD0366","14-01-2024","Mobile","Electronics","North","Jaipur","Rajasthan","Aayush Talwar","Prepaid","46","8","29603","236824","Yes"],
+["ORD0810","14-01-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Armaan Sem","COD","30","7","9473","66311","Yes"],
+["ORD0182","15-01-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Umang Badami","Prepaid","35","2","42458","84916","Yes"],
+["ORD0260","15-01-2024","Tablet","Electronics","West","Pune","Maharashtra","Yuvaan Kaur","Prepaid","56","1","36181","36181","Yes"],
+["ORD0137","16-01-2024","Camera","Electronics","South","Bangalore","Karnataka","Rhea Mangat","COD","40","5","28723","143615","Yes"],
+["ORD0222","16-01-2024","TV","Electronics","West","Pune","Maharashtra","Pihu Mahal","COD","61","1","38547","38547","Yes"],
+["ORD0681","16-01-2024","Laptop","Electronics","East","Kolkata","West Bengal","Miraya Kade","Prepaid","36","6","48935","293610","Yes"],
+["ORD0759","16-01-2024","Headphones","Electronics","North","Delhi","Delhi","Armaan Rajagopalan","COD","60","3","40334","121002","Yes"],
+["ORD0102","17-01-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Siya Boase","COD","35","10","14527","145270","Yes"],
+["ORD0107","17-01-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Mamooty Chakrabarti","COD","30","4","8195","32780","Yes"],
+["ORD0684","17-01-2024","Tablet","Electronics","East","Kolkata","West Bengal","Sumer Issac","COD","44","3","17365","52095","No"],
+["ORD0028","18-01-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Kavya Kohli","COD","57","7","32619","228333","Yes"],
+["ORD0515","18-01-2024","Headphones","Electronics","South","Hyderabad","Telangana","Indrans Tata","COD","43","2","27728","55456","No"],
+["ORD0795","18-01-2024","Headphones","Electronics","North","Delhi","Delhi","Zaina Mand","Prepaid","29","5","16451","82255","Yes"],
+["ORD0970","18-01-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Rasha Dar","COD","48","6","24096","144576","Yes"],
+["ORD0336","19-01-2024","Camera","Electronics","South","Hyderabad","Telangana","Aarush Dhillon","Prepaid","64","7","8090","56630","Yes"],
+["ORD0666","20-01-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Aaina Chandra","Prepaid","31","7","34972","244804","Yes"],
+["ORD0678","20-01-2024","Headphones","Electronics","East","Kolkata","West Bengal","Baiju Varkey","Prepaid","34","6","10303","61818","No"],
+["ORD0335","21-01-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Kartik Shetty","Prepaid","32","8","15894","127152","Yes"],
+["ORD0727","21-01-2024","Smartwatch","Electronics","South","Hyderabad","Telangana","Vanya Shere","Prepaid","44","2","16611","33222","Yes"],
+["ORD0347","22-01-2024","Camera","Electronics","East","Kolkata","West Bengal","Anvi Bassi","COD","51","2","46007","92014","Yes"],
+["ORD0462","22-01-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Anvi Johal","COD","54","8","3397","27176","Yes"],
+["ORD0891","22-01-2024","Mobile","Electronics","South","Chennai","Tamil Nadu","Samar Viswanathan","Prepaid","23","6","7366","44196","Yes"],
+["ORD0716","23-01-2024","Smartwatch","Electronics","West","Ahmedabad","Gujarat","Samar Dalal","Prepaid","47","9","26294","236646","Yes"],
+["ORD0071","25-01-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Ishita Borra","COD","47","8","10563","84504","Yes"],
+["ORD0092","25-01-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Amani Talwar","COD","25","7","14543","101801","Yes"],
+["ORD0516","25-01-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Faiyaz Dutta","Prepaid","41","8","7492","59936","Yes"],
+["ORD0651","25-01-2024","Mobile","Electronics","West","Pune","Maharashtra","Ivana Edwin","Prepaid","34","9","45266","407394","No"],
+["ORD0129","26-01-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Aaryahi Bir","COD","47","2","12601","25202","Yes"],
+["ORD0855","26-01-2024","Laptop","Electronics","South","Hyderabad","Telangana","Shamik Tak","Prepaid","39","1","23413","23413","Yes"],
+["ORD0337","27-01-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Mohanlal Chandran","COD","51","9","43286","389574","Yes"],
+["ORD0601","27-01-2024","Camera","Electronics","East","Kolkata","West Bengal","Sana Dave","Prepaid","23","2","3382","6764","No"],
+["ORD0788","27-01-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Ryan Shukla","COD","63","1","27911","27911","Yes"],
+["ORD0238","28-01-2024","Camera","Electronics","North","Delhi","Delhi","Hunar Vasa","Prepaid","29","6","41605","249630","Yes"],
+["ORD0300","28-01-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Saira Karan","COD","50","5","22317","111585","Yes"],
+["ORD0563","28-01-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Alia Halder","COD","50","5","23612","118060","No"],
+["ORD0899","28-01-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Seher Wali","Prepaid","47","6","26194","157164","Yes"],
+["ORD0217","29-01-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Suhana Bandi","Prepaid","29","3","11041","33123","Yes"],
+["ORD0303","29-01-2024","Tablet","Electronics","South","Hyderabad","Telangana","Gokul Batra","Prepaid","44","7","32486","227402","Yes"],
+["ORD0517","29-01-2024","Laptop","Electronics","North","Jaipur","Rajasthan","Dhruv Deo","Prepaid","39","5","39729","198645","No"],
+["ORD0707","29-01-2024","Mobile","Electronics","South","Hyderabad","Telangana","Mamooty Mani","COD","37","7","17442","122094","Yes"],
+["ORD0169","30-01-2024","Smartwatch","Electronics","West","Ahmedabad","Gujarat","Anay Dyal","COD","33","10","49141","491410","Yes"],
+["ORD0220","30-01-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Mishti Bhat","COD","35","9","29912","269208","Yes"],
+["ORD0358","30-01-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Samarth Bhagat","COD","25","2","40835","81670","Yes"],
+["ORD0474","30-01-2024","Camera","Electronics","West","Mumbai","Maharashtra","Parinaaz Hans","COD","46","7","48731","341117","Yes"],
+["ORD0385","31-01-2024","Mobile","Electronics","West","Pune","Maharashtra","Yakshit Deol","COD","41","2","9319","18638","Yes"],
+["ORD0116","01-02-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Anya Das","COD","23","2","14770","29540","Yes"],
+["ORD0133","01-02-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Trisha Wadhwa","Prepaid","29","7","39964","279748","No"],
+["ORD0140","01-02-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Drishya Shenoy","Prepaid","42","9","8085","72765","Yes"],
+["ORD0547","01-02-2024","Tablet","Electronics","North","Delhi","Delhi","Dishani Seth","Prepaid","57","9","29460","265140","No"],
+["ORD0571","01-02-2024","Laptop","Electronics","South","Hyderabad","Telangana","Hrishita Bhat","COD","23","9","39307","353763","Yes"],
+["ORD0710","01-02-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Bhamini Sha","COD","32","1","34849","34849","Yes"],
+["ORD0971","01-02-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Kavya Bhandari","Prepaid","47","10","26074","260740","Yes"],
+["ORD0170","02-02-2024","TV","Electronics","South","Bangalore","Karnataka","Ryan Chadha","Prepaid","36","5","45003","225015","Yes"],
+["ORD0390","02-02-2024","Camera","Electronics","West","Pune","Maharashtra","Yuvraj  Ahluwalia","COD","58","7","35147","246029","Yes"],
+["ORD0943","02-02-2024","TV","Electronics","West","Mumbai","Maharashtra","Tarini Keer","Prepaid","24","7","39122","273854","Yes"],
+["ORD0877","03-02-2024","Tablet","Electronics","South","Hyderabad","Telangana","Yuvaan Dar","Prepaid","55","5","26747","133735","Yes"],
+["ORD0440","04-02-2024","Mobile","Electronics","North","Delhi","Delhi","Miraya Warrior","COD","47","8","30293","242344","Yes"],
+["ORD0489","04-02-2024","Mobile","Electronics","West","Pune","Maharashtra","Vanya Rastogi","Prepaid","27","9","49123","442107","Yes"],
+["ORD0604","04-02-2024","TV","Electronics","South","Hyderabad","Telangana","Aarush Chand","Prepaid","37","8","16502","132016","No"],
+["ORD0715","04-02-2024","Mobile","Electronics","South","Hyderabad","Telangana","Mahika Kakar","COD","51","8","5071","40568","No"],
+["ORD0819","04-02-2024","Headphones","Electronics","West","Pune","Maharashtra","Elakshi Gill","Prepaid","26","9","2300","20700","Yes"],
+["ORD0177","05-02-2024","Mobile","Electronics","North","Delhi","Delhi","Nishith Mannan","COD","55","6","44877","269262","Yes"],
+["ORD0794","05-02-2024","Headphones","Electronics","North","Delhi","Delhi","Hridaan Bal","COD","31","1","3088","3088","Yes"],
+["ORD0949","05-02-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Mamooty Dyal","COD","38","10","15764","157640","Yes"],
+["ORD0960","06-02-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Rati Bumb","COD","31","7","45608","319256","Yes"],
+["ORD0967","06-02-2024","Smartwatch","Electronics","South","Hyderabad","Telangana","Indranil Sule","Prepaid","65","6","29445","176670","Yes"],
+["ORD0998","06-02-2024","Tablet","Electronics","East","Kolkata","West Bengal","Riya Barman","COD","51","4","14683","58732","Yes"],
+["ORD0267","07-02-2024","TV","Electronics","East","Kolkata","West Bengal","Purab Dora","Prepaid","40","5","2108","10540","Yes"],
+["ORD0816","07-02-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Tarini Brahmbhatt","Prepaid","58","1","41051","41051","No"],
+["ORD0186","08-02-2024","Laptop","Electronics","South","Hyderabad","Telangana","Lagan Barman","COD","52","4","41971","167884","Yes"],
+["ORD0750","08-02-2024","TV","Electronics","East","Kolkata","West Bengal","Emir Banerjee","Prepaid","28","4","33980","135920","No"],
+["ORD0881","08-02-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Himmat Suresh","Prepaid","22","5","16027","80135","Yes"],
+["ORD0184","10-02-2024","TV","Electronics","West","Ahmedabad","Gujarat","Jayesh Rana","Prepaid","32","1","4367","4367","No"],
+["ORD0771","10-02-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Anika Bir","COD","46","2","31948","63896","Yes"],
+["ORD0798","10-02-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Aaryahi Shanker","COD","50","4","11649","46596","Yes"],
+["ORD0814","10-02-2024","Headphones","Electronics","South","Hyderabad","Telangana","Saanvi Sawhney","COD","58","1","16594","16594","Yes"],
+["ORD0496","11-02-2024","Laptop","Electronics","South","Bangalore","Karnataka","Darshit Rajagopal","COD","34","3","8099","24297","Yes"],
+["ORD0953","11-02-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Aayush Jhaveri","Prepaid","45","1","45648","45648","Yes"],
+["ORD0038","12-02-2024","Laptop","Electronics","North","Jaipur","Rajasthan","Miraya Dave","Prepaid","44","2","30932","61864","Yes"],
+["ORD0142","12-02-2024","TV","Electronics","East","Kolkata","West Bengal","Aniruddh Kakar","Prepaid","25","4","33266","133064","Yes"],
+["ORD0175","12-02-2024","Laptop","Electronics","North","Delhi","Delhi","Uthkarsh Malhotra","Prepaid","37","3","30388","91164","Yes"],
+["ORD0284","12-02-2024","TV","Electronics","West","Pune","Maharashtra","Ishita Kamdar","Prepaid","54","8","28820","230560","Yes"],
+["ORD0972","12-02-2024","Laptop","Electronics","South","Hyderabad","Telangana","Yuvaan Yohannan","COD","21","7","22929","160503","Yes"],
+["ORD0239","13-02-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Zaina Garde","Prepaid","39","4","47341","189364","Yes"],
+["ORD0396","13-02-2024","Tablet","Electronics","West","Pune","Maharashtra","Veer Walla","Prepaid","31","3","43708","131124","Yes"],
+["ORD0454","13-02-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Anahita Devan","Prepaid","23","4","22307","89228","Yes"],
+["ORD0752","13-02-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Riaan Khatri","COD","22","8","10812","86496","No"],
+["ORD0784","13-02-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Yashvi Khurana","Prepaid","61","3","30755","92265","Yes"],
+["ORD0348","14-02-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Sahil Batta","Prepaid","43","3","5313","15939","No"],
+["ORD0509","15-02-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Zoya Sami","Prepaid","21","4","32398","129592","No"],
+["ORD0918","15-02-2024","Mobile","Electronics","South","Bangalore","Karnataka","Indrajit Loyal","COD","61","7","11156","78092","Yes"],
+["ORD0146","16-02-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Shamik Keer","Prepaid","49","2","3718","7436","Yes"],
+["ORD0309","16-02-2024","Smartwatch","Electronics","West","Ahmedabad","Gujarat","Raunak Sant","Prepaid","23","5","36772","183860","Yes"],
+["ORD0428","16-02-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Vaibhav Kadakia","COD","19","1","16696","16696","No"],
+["ORD0605","16-02-2024","Camera","Electronics","West","Pune","Maharashtra","Rania Varty","Prepaid","33","3","9145","27435","Yes"],
+["ORD0629","16-02-2024","TV","Electronics","South","Bangalore","Karnataka","Bhavin Dave","COD","37","3","8944","26832","Yes"],
+["ORD0783","16-02-2024","Mobile","Electronics","West","Mumbai","Maharashtra","Chirag Garg","Prepaid","55","9","30325","272925","Yes"],
+["ORD0166","17-02-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Dishani Gala","Prepaid","50","6","25055","150330","Yes"],
+["ORD0704","17-02-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Tejas Devi","COD","54","4","26986","107944","No"],
+["ORD0001","18-02-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Mehul Madan","Prepaid","29","9","33207","298863","No"],
+["ORD0049","18-02-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Nirvi Tata","Prepaid","33","8","15961","127688","Yes"],
+["ORD0080","18-02-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Adira Dugar","COD","38","4","7667","30668","Yes"],
+["ORD0431","18-02-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Ela Swaminathan","Prepaid","40","5","18247","91235","No"],
+["ORD0614","18-02-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Ishita Kapadia","Prepaid","54","10","20178","201780","Yes"],
+["ORD0880","18-02-2024","Laptop","Electronics","South","Bangalore","Karnataka","Amani Deo","Prepaid","34","7","29785","208495","Yes"],
+["ORD0956","18-02-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Vidur Gola","Prepaid","44","5","1560","7800","Yes"],
+["ORD0608","19-02-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Aaryahi Kade","Prepaid","46","4","37055","148220","No"],
+["ORD0192","20-02-2024","Laptop","Electronics","North","Jaipur","Rajasthan","Priyansh Agrawal","COD","19","5","35158","175790","Yes"],
+["ORD0210","20-02-2024","Camera","Electronics","West","Pune","Maharashtra","Elakshi Karan","Prepaid","58","3","15001","45003","Yes"],
+["ORD0254","20-02-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Indranil Ray","COD","47","8","19590","156720","Yes"],
+["ORD0274","20-02-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Tiya Sodhi","COD","31","2","12633","25266","Yes"],
+["ORD0308","20-02-2024","Mobile","Electronics","South","Bangalore","Karnataka","Vritika Dhillon","Prepaid","61","5","24081","120405","Yes"],
+["ORD0553","20-02-2024","Camera","Electronics","South","Hyderabad","Telangana","Indrajit Chokshi","Prepaid","40","10","22388","223880","Yes"],
+["ORD0597","20-02-2024","TV","Electronics","South","Chennai","Tamil Nadu","Riaan Goyal","Prepaid","59","5","6420","32100","No"],
+["ORD0786","20-02-2024","Mobile","Electronics","West","Mumbai","Maharashtra","Vanya Chatterjee","Prepaid","22","10","34956","349560","Yes"],
+["ORD0286","21-02-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Anvi Kalita","Prepaid","54","4","31302","125208","Yes"],
+["ORD0679","21-02-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Lakshit Seshadri","COD","31","9","26001","234009","Yes"],
+["ORD0846","21-02-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Ira Khanna","Prepaid","19","3","24353","73059","Yes"],
+["ORD0999","21-02-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Zaina Soman","Prepaid","22","8","28844","230752","Yes"],
+["ORD0242","22-02-2024","Tablet","Electronics","South","Hyderabad","Telangana","Indrans Kanda","COD","28","5","23574","117870","Yes"],
+["ORD0757","22-02-2024","Laptop","Electronics","West","Pune","Maharashtra","Jhanvi Sen","COD","32","7","46924","328468","Yes"],
+["ORD0094","23-02-2024","Camera","Electronics","North","Jaipur","Rajasthan","Saksham Bala","Prepaid","58","3","44062","132186","Yes"],
+["ORD0202","23-02-2024","TV","Electronics","South","Bangalore","Karnataka","Aaryahi Gour","COD","56","9","26343","237087","Yes"],
+["ORD0827","23-02-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Raghav Srivastava","COD","21","4","31002","124008","Yes"],
+["ORD0906","23-02-2024","Headphones","Electronics","East","Kolkata","West Bengal","Kaira Cheema","Prepaid","47","9","44222","397998","Yes"],
+["ORD0115","24-02-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Madhup Lal","COD","18","10","24382","243820","Yes"],
+["ORD0162","24-02-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Anika Raj","Prepaid","18","3","48710","146130","Yes"],
+["ORD0976","24-02-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Nakul Chokshi","COD","26","4","45379","181516","Yes"],
+["ORD0581","25-02-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Yakshit Sem","Prepaid","28","8","43472","347776","No"],
+["ORD0754","25-02-2024","TV","Electronics","South","Chennai","Tamil Nadu","Indranil Kata","Prepaid","37","3","5221","15663","Yes"],
+["ORD0935","25-02-2024","Smartwatch","Electronics","North","Delhi","Delhi","Tiya Thaman","COD","63","4","27412","109648","Yes"],
+["ORD0219","27-02-2024","Camera","Electronics","South","Hyderabad","Telangana","Tara Chakrabarti","Prepaid","55","2","36110","72220","Yes"],
+["ORD0414","28-02-2024","Mobile","Electronics","South","Hyderabad","Telangana","Neelofar Varkey","COD","46","5","48096","240480","Yes"],
+["ORD0476","28-02-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Riaan Roy","Prepaid","48","7","16782","117474","Yes"],
+["ORD0578","28-02-2024","Headphones","Electronics","West","Pune","Maharashtra","Mannat Aurora","Prepaid","19","8","10053","80424","Yes"],
+["ORD0036","02-03-2024","TV","Electronics","South","Hyderabad","Telangana","Jivika Upadhyay","Prepaid","54","7","29897","209279","Yes"],
+["ORD0332","02-03-2024","TV","Electronics","North","Delhi","Delhi","Misha Majumdar","Prepaid","46","7","33518","234626","Yes"],
+["ORD0350","02-03-2024","TV","Electronics","North","Jaipur","Rajasthan","Drishya Barad","Prepaid","58","6","25959","155754","Yes"],
+["ORD0438","02-03-2024","Tablet","Electronics","West","Pune","Maharashtra","Ivana Butala","Prepaid","64","8","14170","113360","Yes"],
+["ORD0531","02-03-2024","Camera","Electronics","North","Delhi","Delhi","Indrajit Tripathi","Prepaid","58","8","1830","14640","Yes"],
+["ORD0600","02-03-2024","TV","Electronics","North","Delhi","Delhi","Zeeshan Ganesan","COD","39","9","19967","179703","Yes"],
+["ORD0886","02-03-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Amani Thakur","COD","30","2","21939","43878","Yes"],
+["ORD0936","02-03-2024","Laptop","Electronics","West","Pune","Maharashtra","Farhan Raja","COD","30","10","39582","395820","Yes"],
+["ORD0606","03-03-2024","Mobile","Electronics","East","Kolkata","West Bengal","Seher Gour","COD","47","8","30721","245768","No"],
+["ORD0662","03-03-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Stuvan Chakrabarti","COD","40","7","22693","158851","Yes"],
+["ORD0821","03-03-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Taran Raman","Prepaid","51","6","5125","30750","Yes"],
+["ORD0093","04-03-2024","Tablet","Electronics","North","Delhi","Delhi","Ishaan Bansal","COD","33","9","26911","242199","Yes"],
+["ORD0104","04-03-2024","TV","Electronics","West","Pune","Maharashtra","Alia Toor","COD","32","6","5164","30984","Yes"],
+["ORD0838","04-03-2024","TV","Electronics","North","Jaipur","Rajasthan","Hridaan Kashyap","Prepaid","21","3","8030","24090","Yes"],
+["ORD0078","05-03-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Eva Sandhu","Prepaid","46","4","44581","178324","Yes"],
+["ORD0141","05-03-2024","Headphones","Electronics","South","Bangalore","Karnataka","Prerak Sharma","Prepaid","26","2","10167","20334","Yes"],
+["ORD0339","05-03-2024","Laptop","Electronics","South","Hyderabad","Telangana","Raghav Barad","Prepaid","27","3","18580","55740","Yes"],
+["ORD0188","06-03-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Emir Edwin","Prepaid","55","3","45204","135612","No"],
+["ORD0923","06-03-2024","Mobile","Electronics","West","Mumbai","Maharashtra","Shalv Devan","Prepaid","31","9","1684","15156","Yes"],
+["ORD0132","07-03-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Divit Raja","COD","50","3","26602","79806","Yes"],
+["ORD0205","07-03-2024","Laptop","Electronics","South","Hyderabad","Telangana","Anvi Roy","Prepaid","47","1","41218","41218","Yes"],
+["ORD0272","07-03-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Lagan Bobal","Prepaid","50","3","36681","110043","Yes"],
+["ORD0321","07-03-2024","Smartwatch","Electronics","South","Hyderabad","Telangana","Nayantara Venkatesh","Prepaid","24","10","16483","164830","Yes"],
+["ORD0452","07-03-2024","Smartwatch","Electronics","West","Ahmedabad","Gujarat","Purab Mahajan","COD","60","4","16208","64832","Yes"],
+["ORD0327","08-03-2024","Mobile","Electronics","West","Pune","Maharashtra","Neelofar Bhagat","Prepaid","32","2","41862","83724","Yes"],
+["ORD0832","08-03-2024","TV","Electronics","South","Bangalore","Karnataka","Manjari Vohra","COD","43","1","2108","2108","Yes"],
+["ORD0934","08-03-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Sumer Bhargava","Prepaid","37","2","3780","7560","Yes"],
+["ORD0013","09-03-2024","Laptop","Electronics","North","Jaipur","Rajasthan","Zain Shah","COD","51","9","13812","124308","Yes"],
+["ORD0532","09-03-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Vedika Mangal","COD","19","5","16177","80885","Yes"],
+["ORD0812","09-03-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Krish Dyal","COD","55","3","14894","44682","Yes"],
+["ORD0485","10-03-2024","TV","Electronics","South","Hyderabad","Telangana","Mohanlal Baral","Prepaid","43","2","18172","36344","Yes"],
+["ORD0845","10-03-2024","TV","Electronics","South","Bangalore","Karnataka","Ira Biswas","Prepaid","57","7","39839","278873","Yes"],
+["ORD0016","11-03-2024","TV","Electronics","South","Chennai","Tamil Nadu","Kartik Sura","COD","43","10","48362","483620","No"],
+["ORD0268","11-03-2024","Laptop","Electronics","North","Delhi","Delhi","Amani Sahni","Prepaid","45","1","36919","36919","Yes"],
+["ORD0311","11-03-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Hridaan Walla","COD","57","3","38201","114603","Yes"],
+["ORD0364","11-03-2024","Mobile","Electronics","North","Delhi","Delhi","Riya Singh","COD","49","8","28022","224176","Yes"],
+["ORD0377","11-03-2024","Laptop","Electronics","North","Jaipur","Rajasthan","Madhup Cheema","COD","44","4","10983","43932","Yes"],
+["ORD0412","11-03-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Baiju Badami","Prepaid","21","6","4235","25410","No"],
+["ORD0997","11-03-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Yuvraj  Desai","Prepaid","27","2","19659","39318","Yes"],
+["ORD0359","13-03-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Rohan Deshpande","COD","51","10","43838","438380","Yes"],
+["ORD0808","13-03-2024","TV","Electronics","West","Mumbai","Maharashtra","Sara Chaudhari","COD","32","4","8025","32100","Yes"],
+["ORD0919","13-03-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Sara Gola","Prepaid","48","1","6189","6189","Yes"],
+["ORD0977","13-03-2024","Mobile","Electronics","South","Hyderabad","Telangana","Bhamini Kohli","COD","65","10","6645","66450","Yes"],
+["ORD0926","14-03-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Tanya Dutt","Prepaid","28","7","6498","45486","Yes"],
+["ORD0458","15-03-2024","Smartwatch","Electronics","West","Ahmedabad","Gujarat","Prerak Kohli","COD","43","4","25807","103228","Yes"],
+["ORD0989","15-03-2024","TV","Electronics","West","Pune","Maharashtra","Purab Divan","COD","42","5","1101","5505","Yes"],
+["ORD0086","16-03-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Lavanya Kanda","Prepaid","63","9","19910","179190","Yes"],
+["ORD0259","16-03-2024","Headphones","Electronics","South","Bangalore","Karnataka","Mamooty Saha","COD","52","9","3736","33624","Yes"],
+["ORD0340","16-03-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Nirvaan Bhagat","Prepaid","20","9","49908","449172","Yes"],
+["ORD0593","16-03-2024","TV","Electronics","South","Chennai","Tamil Nadu","Piya Chatterjee","COD","64","1","39567","39567","Yes"],
+["ORD0655","16-03-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Ehsaan Magar","Prepaid","38","7","45590","319130","Yes"],
+["ORD0670","16-03-2024","TV","Electronics","West","Ahmedabad","Gujarat","Samar Gade","Prepaid","25","6","27423","164538","No"],
+["ORD0342","17-03-2024","Headphones","Electronics","South","Bangalore","Karnataka","Advik Kanda","Prepaid","20","1","12555","12555","Yes"],
+["ORD0384","17-03-2024","TV","Electronics","West","Ahmedabad","Gujarat","Sahil Choudhury","COD","45","7","5046","35322","Yes"],
+["ORD0503","17-03-2024","Camera","Electronics","North","Jaipur","Rajasthan","Hazel Sibal","Prepaid","50","4","3930","15720","No"],
+["ORD0985","17-03-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Krish Kanda","COD","56","3","9730","29190","Yes"],
+["ORD0813","18-03-2024","Tablet","Electronics","South","Bangalore","Karnataka","Aarna Sodhi","COD","28","2","33079","66158","Yes"],
+["ORD0349","19-03-2024","Mobile","Electronics","East","Kolkata","West Bengal","Raghav Aurora","COD","50","5","35618","178090","No"],
+["ORD0417","19-03-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Ehsaan Dayal","Prepaid","51","4","37764","151056","No"],
+["ORD0674","19-03-2024","TV","Electronics","South","Chennai","Tamil Nadu","Vritika Bala","COD","64","6","45833","274998","No"],
+["ORD0676","19-03-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Lagan Mammen","COD","59","4","36996","147984","Yes"],
+["ORD0738","19-03-2024","Tablet","Electronics","South","Hyderabad","Telangana","Zara Chawla","Prepaid","57","7","38074","266518","Yes"],
+["ORD0964","19-03-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Neysa Comar","COD","44","3","20749","62247","Yes"],
+["ORD0711","20-03-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Arnav Chaudhuri","Prepaid","26","1","39363","39363","Yes"],
+["ORD0729","20-03-2024","Mobile","Electronics","West","Mumbai","Maharashtra","Neysa Walia","COD","41","1","14005","14005","Yes"],
+["ORD0869","20-03-2024","Tablet","Electronics","West","Pune","Maharashtra","Nitya Roy","Prepaid","50","3","10809","32427","Yes"],
+["ORD0298","21-03-2024","Mobile","Electronics","North","Jaipur","Rajasthan","Myra Gour","COD","40","5","28541","142705","Yes"],
+["ORD0560","21-03-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Nehmat Doctor","COD","55","3","33905","101715","Yes"],
+["ORD0699","21-03-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Reyansh Anne","Prepaid","54","4","16457","65828","No"],
+["ORD0965","21-03-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Eva Guha","Prepaid","34","3","24349","73047","Yes"],
+["ORD0179","22-03-2024","Laptop","Electronics","East","Kolkata","West Bengal","Miraya Bhatti","Prepaid","57","8","15704","125632","Yes"],
+["ORD0763","22-03-2024","TV","Electronics","North","Jaipur","Rajasthan","Biju Anand","Prepaid","25","5","18780","93900","Yes"],
+["ORD0176","24-03-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Aarna Amble","COD","54","9","44581","401229","Yes"],
+["ORD0315","24-03-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Yashvi Buch","Prepaid","65","5","4788","23940","Yes"],
+["ORD0498","24-03-2024","Camera","Electronics","North","Delhi","Delhi","Parinaaz Baral","COD","32","4","17104","68416","Yes"],
+["ORD0564","24-03-2024","TV","Electronics","South","Chennai","Tamil Nadu","Ayesha Barad","Prepaid","43","10","33862","338620","Yes"],
+["ORD0357","25-03-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Tarini Dugar","Prepaid","49","2","29982","59964","Yes"],
+["ORD0408","25-03-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Samiha Rajagopal","Prepaid","47","6","42159","252954","Yes"],
+["ORD0724","25-03-2024","Headphones","Electronics","North","Delhi","Delhi","Saira Bhatnagar","COD","52","5","37772","188860","No"],
+["ORD0895","25-03-2024","Tablet","Electronics","South","Hyderabad","Telangana","Indrajit Shenoy","COD","46","4","26712","106848","Yes"],
+["ORD0255","27-03-2024","TV","Electronics","North","Delhi","Delhi","Darshit Khurana","COD","60","2","47573","95146","Yes"],
+["ORD0510","27-03-2024","Headphones","Electronics","North","Delhi","Delhi","Urvi Ghose","COD","24","5","42288","211440","Yes"],
+["ORD0609","27-03-2024","Tablet","Electronics","South","Hyderabad","Telangana","Hridaan Kibe","COD","33","4","39207","156828","No"],
+["ORD0885","28-03-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Ayesha Grewal","Prepaid","25","8","39736","317888","Yes"],
+["ORD0283","29-03-2024","Camera","Electronics","South","Bangalore","Karnataka","Zaina Chander","Prepaid","34","2","49095","98190","Yes"],
+["ORD0658","29-03-2024","TV","Electronics","South","Bangalore","Karnataka","Emir Garde","Prepaid","61","9","28019","252171","Yes"],
+["ORD0749","29-03-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Sana Gaba","Prepaid","55","1","16868","16868","No"],
+["ORD0988","29-03-2024","Camera","Electronics","South","Hyderabad","Telangana","Indrajit Bail","Prepaid","53","7","30845","215915","Yes"],
+["ORD0333","31-03-2024","TV","Electronics","South","Hyderabad","Telangana","Aaryahi Mander","Prepaid","58","10","16959","169590","Yes"],
+["ORD0626","31-03-2024","Smartwatch","Electronics","South","Hyderabad","Telangana","Ira Doctor","COD","58","1","12734","12734","Yes"],
+["ORD0656","31-03-2024","TV","Electronics","West","Ahmedabad","Gujarat","Aniruddh Dey","Prepaid","28","7","14793","103551","Yes"],
+["ORD0329","01-04-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Purab Vig","Prepaid","19","9","2954","26586","Yes"],
+["ORD0706","01-04-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Anika Choudhary","Prepaid","45","10","27330","273300","Yes"],
+["ORD0913","01-04-2024","Smartwatch","Electronics","North","Delhi","Delhi","Zain Borra","Prepaid","34","2","48947","97894","Yes"],
+["ORD0126","02-04-2024","Tablet","Electronics","West","Pune","Maharashtra","Aarna Kala","Prepaid","20","6","28698","172188","Yes"],
+["ORD0675","02-04-2024","Mobile","Electronics","South","Chennai","Tamil Nadu","Stuvan Apte","COD","34","2","39017","78034","Yes"],
+["ORD0862","02-04-2024","Camera","Electronics","North","Delhi","Delhi","Suhana Kale","Prepaid","45","9","3673","33057","Yes"],
+["ORD0003","03-04-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Bhavin Thaman","COD","44","8","10075","80600","No"],
+["ORD0418","03-04-2024","Headphones","Electronics","South","Bangalore","Karnataka","Ojas Dhillon","Prepaid","58","7","12723","89061","Yes"],
+["ORD0691","03-04-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Jivin Kapoor","Prepaid","55","10","36211","362110","Yes"],
+["ORD0941","04-04-2024","Laptop","Electronics","South","Bangalore","Karnataka","Kaira Borra","Prepaid","43","2","31433","62866","Yes"],
+["ORD0155","05-04-2024","Tablet","Electronics","West","Pune","Maharashtra","Reyansh Solanki","COD","64","1","3405","3405","Yes"],
+["ORD0411","05-04-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Vivaan Dhawan","Prepaid","50","6","48186","289116","Yes"],
+["ORD0545","05-04-2024","Tablet","Electronics","South","Bangalore","Karnataka","Anay Sahota","Prepaid","59","5","27033","135165","Yes"],
+["ORD0657","05-04-2024","TV","Electronics","North","Delhi","Delhi","Oorja Maharaj","Prepaid","52","4","1263","5052","No"],
+["ORD0860","05-04-2024","Camera","Electronics","West","Mumbai","Maharashtra","Aradhya Mall","Prepaid","24","8","44734","357872","Yes"],
+["ORD0159","06-04-2024","Mobile","Electronics","West","Pune","Maharashtra","Shalv Reddy","Prepaid","54","8","20004","160032","Yes"],
+["ORD0526","06-04-2024","TV","Electronics","East","Kolkata","West Bengal","Veer Raju","Prepaid","52","1","42266","42266","Yes"],
+["ORD0645","06-04-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Amani Sastry","Prepaid","31","9","40930","368370","Yes"],
+["ORD0894","06-04-2024","TV","Electronics","North","Jaipur","Rajasthan","Diya Hegde","COD","30","6","26200","157200","Yes"],
+["ORD0058","07-04-2024","Headphones","Electronics","South","Bangalore","Karnataka","Pihu Sankar","COD","28","1","21747","21747","Yes"],
+["ORD0653","07-04-2024","Headphones","Electronics","West","Pune","Maharashtra","Anika Bhat","Prepaid","24","6","32507","195042","No"],
+["ORD0768","07-04-2024","Camera","Electronics","West","Mumbai","Maharashtra","Rasha Kaul","Prepaid","24","10","25646","256460","Yes"],
+["ORD0793","07-04-2024","Tablet","Electronics","East","Kolkata","West Bengal","Miraan Doctor","Prepaid","18","2","45809","91618","Yes"],
+["ORD0854","07-04-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Alia Dixit","Prepaid","27","4","26432","105728","Yes"],
+["ORD0055","08-04-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Tarini Sachar","COD","21","6","38995","233970","Yes"],
+["ORD0362","09-04-2024","Laptop","Electronics","East","Kolkata","West Bengal","Shalv Lanka","COD","32","5","49151","245755","Yes"],
+["ORD0833","09-04-2024","TV","Electronics","South","Hyderabad","Telangana","Aaryahi Sundaram","COD","28","1","48714","48714","Yes"],
+["ORD0867","09-04-2024","Laptop","Electronics","North","Delhi","Delhi","Misha Lall","Prepaid","20","10","44830","448300","Yes"],
+["ORD0029","10-04-2024","Camera","Electronics","West","Mumbai","Maharashtra","Elakshi Trivedi","COD","48","6","34820","208920","Yes"],
+["ORD0168","10-04-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Divit Chaudhry","Prepaid","51","5","35493","177465","Yes"],
+["ORD0352","10-04-2024","Camera","Electronics","West","Mumbai","Maharashtra","Charvi Kurian","Prepaid","42","6","21844","131064","Yes"],
+["ORD0032","11-04-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Lagan Cherian","COD","46","3","48510","145530","Yes"],
+["ORD0902","11-04-2024","TV","Electronics","South","Hyderabad","Telangana","Bhavin Chatterjee","COD","35","6","24441","146646","Yes"],
+["ORD0250","12-04-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Vritika Chahal","COD","21","10","42959","429590","Yes"],
+["ORD0940","12-04-2024","Tablet","Electronics","East","Kolkata","West Bengal","Nehmat Sur","COD","33","3","9633","28899","Yes"],
+["ORD0996","12-04-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Shanaya Bakshi","Prepaid","23","9","16186","145674","Yes"],
+["ORD0371","13-04-2024","Camera","Electronics","North","Jaipur","Rajasthan","Darshit Sekhon","Prepaid","27","2","6457","12914","Yes"],
+["ORD0702","13-04-2024","Headphones","Electronics","East","Kolkata","West Bengal","Onkar Dasgupta","COD","52","10","26924","269240","No"],
+["ORD0499","15-04-2024","Mobile","Electronics","West","Pune","Maharashtra","Amani Chander","Prepaid","20","7","39112","273784","Yes"],
+["ORD0237","16-04-2024","Mobile","Electronics","North","Delhi","Delhi","Kanav Cheema","Prepaid","59","4","4870","19480","Yes"],
+["ORD0725","16-04-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Eva Ghose","Prepaid","25","6","47031","282186","No"],
+["ORD0500","17-04-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Eva Manne","Prepaid","47","5","28132","140660","No"],
+["ORD0667","17-04-2024","Smartwatch","Electronics","West","Ahmedabad","Gujarat","Sana Dara","Prepaid","29","8","14322","114576","Yes"],
+["ORD0920","17-04-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Jivika Bansal","COD","64","1","48805","48805","Yes"],
+["ORD0112","18-04-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Advika Kulkarni","COD","36","6","19760","118560","Yes"],
+["ORD0822","18-04-2024","Laptop","Electronics","South","Bangalore","Karnataka","Rohan Chakraborty","Prepaid","20","2","2481","4962","Yes"],
+["ORD0825","18-04-2024","Camera","Electronics","West","Pune","Maharashtra","Aaryahi Rama","Prepaid","30","10","20851","208510","Yes"],
+["ORD0079","19-04-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Rohan Chacko","Prepaid","41","8","30747","245976","Yes"],
+["ORD0572","19-04-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Vritika Date","Prepaid","31","2","15875","31750","Yes"],
+["ORD0663","19-04-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Yashvi Thaman","COD","40","9","26378","237402","Yes"],
+["ORD0866","20-04-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Rasha Mammen","Prepaid","46","9","31380","282420","Yes"],
+["ORD0163","21-04-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Baiju Iyengar","Prepaid","28","1","17968","17968","Yes"],
+["ORD0875","21-04-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Kismat Bhagat","COD","39","10","10202","102020","Yes"],
+["ORD0081","22-04-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Ojas Kamdar","COD","39","5","32770","163850","Yes"],
+["ORD0087","22-04-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Rati Tella","COD","48","9","48867","439803","Yes"],
+["ORD0138","22-04-2024","Tablet","Electronics","South","Hyderabad","Telangana","Jhanvi Andra","COD","45","9","29277","263493","No"],
+["ORD0775","22-04-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Devansh Mammen","Prepaid","27","6","25189","151134","Yes"],
+["ORD0090","23-04-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Kanav Bera","Prepaid","21","8","24479","195832","Yes"],
+["ORD0099","23-04-2024","TV","Electronics","West","Ahmedabad","Gujarat","Ela Mane","COD","44","4","32199","128796","Yes"],
+["ORD0121","23-04-2024","TV","Electronics","South","Hyderabad","Telangana","Misha Wason","Prepaid","40","6","19203","115218","Yes"],
+["ORD0463","23-04-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Ryan Master","COD","41","10","46867","468670","Yes"],
+["ORD0481","23-04-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Azad Bains","COD","55","10","22830","228300","Yes"],
+["ORD0765","23-04-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Taran Doctor","COD","43","5","18202","91010","Yes"],
+["ORD0876","23-04-2024","TV","Electronics","South","Bangalore","Karnataka","Keya Bhargava","Prepaid","29","6","16511","99066","Yes"],
+["ORD0322","24-04-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Hansh Grewal","COD","28","10","46473","464730","Yes"],
+["ORD0514","24-04-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Vaibhav Mahal","Prepaid","25","3","12208","36624","Yes"],
+["ORD0083","25-04-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Gatik Bains","COD","34","8","5614","44912","Yes"],
+["ORD0269","25-04-2024","TV","Electronics","South","Chennai","Tamil Nadu","Piya Sharaf","Prepaid","60","2","13198","26396","Yes"],
+["ORD0330","25-04-2024","Tablet","Electronics","North","Delhi","Delhi","Saksham De","Prepaid","41","4","40085","160340","Yes"],
+["ORD0528","25-04-2024","TV","Electronics","South","Bangalore","Karnataka","Indrajit Iyengar","Prepaid","41","4","15212","60848","No"],
+["ORD0959","25-04-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Yasmin Subramaniam","COD","63","8","19661","157288","Yes"],
+["ORD0234","26-04-2024","Headphones","Electronics","South","Bangalore","Karnataka","Neelofar Samra","COD","64","7","19342","135394","Yes"],
+["ORD0002","27-04-2024","Headphones","Electronics","West","Pune","Maharashtra","Priyansh Andra","COD","37","5","22926","114630","Yes"],
+["ORD0316","27-04-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Dhruv Aurora","Prepaid","52","7","35635","249445","Yes"],
+["ORD0164","28-04-2024","Laptop","Electronics","West","Pune","Maharashtra","Saanvi Dugar","COD","19","9","20873","187857","Yes"],
+["ORD0708","28-04-2024","Headphones","Electronics","South","Hyderabad","Telangana","Emir Atwal","Prepaid","24","3","24989","74967","Yes"],
+["ORD0743","28-04-2024","Tablet","Electronics","South","Hyderabad","Telangana","Kavya Chawla","COD","41","9","40628","365652","Yes"],
+["ORD0762","28-04-2024","Tablet","Electronics","East","Kolkata","West Bengal","Farhan Kannan","COD","44","3","26766","80298","Yes"],
+["ORD0409","29-04-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Diya Deo","COD","50","4","43254","173016","Yes"],
+["ORD0410","29-04-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Vihaan Johal","Prepaid","60","2","27717","55434","Yes"],
+["ORD0665","29-04-2024","Laptop","Electronics","South","Bangalore","Karnataka","Alisha Sane","Prepaid","58","5","37365","186825","Yes"],
+["ORD0963","29-04-2024","Camera","Electronics","West","Mumbai","Maharashtra","Emir Doshi","COD","63","1","44124","44124","Yes"],
+["ORD0062","30-04-2024","TV","Electronics","North","Jaipur","Rajasthan","Anay Choudhry","Prepaid","45","7","30201","211407","Yes"],
+["ORD0465","30-04-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Mannat Kapoor","Prepaid","31","8","32874","262992","Yes"],
+["ORD0530","30-04-2024","Tablet","Electronics","North","Delhi","Delhi","Hunar Dhar","Prepaid","46","3","45587","136761","No"],
+["ORD0668","30-04-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Piya Chauhan","Prepaid","47","9","20616","185544","No"],
+["ORD0849","30-04-2024","Laptop","Electronics","East","Kolkata","West Bengal","Nishith Mani","COD","64","3","5825","17475","Yes"],
+["ORD0037","01-05-2024","Camera","Electronics","West","Mumbai","Maharashtra","Siya Sem","COD","34","5","17370","86850","Yes"],
+["ORD0393","01-05-2024","Tablet","Electronics","West","Pune","Maharashtra","Dhruv Venkatesh","Prepaid","59","1","33684","33684","Yes"],
+["ORD0565","01-05-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Diya Master","Prepaid","59","9","26967","242703","No"],
+["ORD0295","02-05-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Ira Chaudry","Prepaid","32","10","38206","382060","Yes"],
+["ORD0643","02-05-2024","Tablet","Electronics","South","Hyderabad","Telangana","Advika Lata","COD","40","5","17732","88660","No"],
+["ORD0461","03-05-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Kashvi Rajagopalan","COD","36","2","23646","47292","Yes"],
+["ORD0074","04-05-2024","Mobile","Electronics","North","Delhi","Delhi","Anahita Sheth","COD","46","8","26526","212208","Yes"],
+["ORD0143","04-05-2024","Camera","Electronics","South","Hyderabad","Telangana","Tejas Borde","COD","65","5","19957","99785","Yes"],
+["ORD0156","04-05-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Arhaan Mane","COD","30","6","6162","36972","Yes"],
+["ORD0299","05-05-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Tiya Bhatnagar","Prepaid","52","4","31017","124068","Yes"],
+["ORD0584","05-05-2024","Mobile","Electronics","South","Bangalore","Karnataka","Eshani Kuruvilla","Prepaid","62","7","6221","43547","Yes"],
+["ORD0289","06-05-2024","Laptop","Electronics","South","Hyderabad","Telangana","Dhruv Samra","COD","65","3","41696","125088","Yes"],
+["ORD0495","07-05-2024","TV","Electronics","West","Ahmedabad","Gujarat","Faiyaz Sarin","Prepaid","28","2","37936","75872","Yes"],
+["ORD0652","08-05-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Heer Bhatti","COD","18","3","26583","79749","No"],
+["ORD0844","08-05-2024","Mobile","Electronics","East","Kolkata","West Bengal","Shanaya Gulati","Prepaid","51","1","48406","48406","Yes"],
+["ORD0487","09-05-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Tushar Sinha","Prepaid","32","5","33831","169155","Yes"],
+["ORD0139","10-05-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Alisha Sandhu","Prepaid","57","7","18434","129038","No"],
+["ORD0193","10-05-2024","TV","Electronics","West","Pune","Maharashtra","Vanya Dutta","Prepaid","45","6","33435","200610","Yes"],
+["ORD0345","10-05-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Neysa Verma","Prepaid","19","3","34227","102681","Yes"],
+["ORD0644","10-05-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Vedika Rama","COD","21","1","20006","20006","Yes"],
+["ORD0815","10-05-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Sana Ramakrishnan","Prepaid","50","9","34839","313551","Yes"],
+["ORD0987","10-05-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Kimaya Raval","COD","41","2","5895","11790","Yes"],
+["ORD0868","11-05-2024","Mobile","Electronics","West","Mumbai","Maharashtra","Nayantara Varty","Prepaid","61","9","8632","77688","Yes"],
+["ORD0261","12-05-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Nehmat Singhal","COD","24","4","18716","74864","Yes"],
+["ORD0802","12-05-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Hrishita Deshmukh","Prepaid","38","7","10894","76258","Yes"],
+["ORD0908","12-05-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Mehul Bhavsar","COD","46","6","11123","66738","Yes"],
+["ORD0174","13-05-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Darshit Dhingra","COD","23","7","25467","178269","Yes"],
+["ORD0602","13-05-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Mannat Jani","Prepaid","53","7","26941","188587","Yes"],
+["ORD0025","14-05-2024","Laptop","Electronics","North","Jaipur","Rajasthan","Lakshit Sankar","COD","57","3","13138","39414","Yes"],
+["ORD0270","14-05-2024","Camera","Electronics","West","Pune","Maharashtra","Uthkarsh Krishnan","COD","61","7","28734","201138","Yes"],
+["ORD0558","14-05-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Renee Jayaraman","COD","56","4","6601","26404","Yes"],
+["ORD0568","14-05-2024","Tablet","Electronics","East","Kolkata","West Bengal","Vaibhav Yohannan","COD","22","6","11263","67578","Yes"],
+["ORD0937","14-05-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Khushi Issac","Prepaid","58","6","13503","81018","Yes"],
+["ORD0755","16-05-2024","Camera","Electronics","West","Pune","Maharashtra","Onkar Sama","Prepaid","56","6","1361","8166","Yes"],
+["ORD0993","16-05-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Siya Sur","COD","57","2","40944","81888","Yes"],
+["ORD0324","17-05-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Inaaya  Thakkar","COD","48","10","12154","121540","Yes"],
+["ORD0705","17-05-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Aniruddh Baral","COD","26","1","26275","26275","Yes"],
+["ORD0958","17-05-2024","Camera","Electronics","North","Jaipur","Rajasthan","Zara Johal","Prepaid","18","4","11743","46972","Yes"],
+["ORD0818","18-05-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Zaina Ramachandran","Prepaid","45","6","21186","127116","Yes"],
+["ORD0456","19-05-2024","Laptop","Electronics","East","Kolkata","West Bengal","Suhana Swamy","COD","49","5","16551","82755","Yes"],
+["ORD0477","19-05-2024","TV","Electronics","North","Jaipur","Rajasthan","Riya Kuruvilla","COD","43","6","10317","61902","Yes"],
+["ORD0370","20-05-2024","TV","Electronics","East","Kolkata","West Bengal","Raunak Verma","COD","23","5","30258","151290","Yes"],
+["ORD0758","20-05-2024","Mobile","Electronics","East","Kolkata","West Bengal","Pranay Karpe","Prepaid","58","10","5824","58240","Yes"],
+["ORD0436","22-05-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Aarav Sabharwal","COD","33","5","32039","160195","Yes"],
+["ORD0787","22-05-2024","Laptop","Electronics","North","Delhi","Delhi","Zeeshan Chokshi","Prepaid","58","5","8403","42015","Yes"],
+["ORD0853","22-05-2024","TV","Electronics","South","Hyderabad","Telangana","Nitara Shenoy","Prepaid","38","9","16964","152676","Yes"],
+["ORD0732","23-05-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Navya Sen","Prepaid","58","6","10357","62142","Yes"],
+["ORD0522","24-05-2024","Camera","Electronics","North","Delhi","Delhi","Kismat Khurana","COD","44","3","6317","18951","No"],
+["ORD0197","25-05-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Kartik Bawa","Prepaid","24","10","18798","187980","No"],
+["ORD0927","25-05-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Advik Krishna","COD","55","10","28236","282360","Yes"],
+["ORD0582","26-05-2024","Headphones","Electronics","North","Delhi","Delhi","Hunar Sarkar","Prepaid","61","4","17395","69580","Yes"],
+["ORD0089","27-05-2024","Laptop","Electronics","North","Delhi","Delhi","Advik Bal","COD","53","9","27211","244899","Yes"],
+["ORD0103","27-05-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Zaina Chaudhari","COD","34","7","44162","309134","Yes"],
+["ORD0183","27-05-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Jayesh Karpe","Prepaid","46","3","30786","92358","Yes"],
+["ORD0820","27-05-2024","Camera","Electronics","East","Kolkata","West Bengal","Divij Ramesh","COD","31","8","35420","283360","Yes"],
+["ORD0075","28-05-2024","Camera","Electronics","North","Delhi","Delhi","Kavya Magar","Prepaid","27","8","48470","387760","Yes"],
+["ORD0180","28-05-2024","Mobile","Electronics","South","Hyderabad","Telangana","Aaina Lad","COD","59","3","33659","100977","Yes"],
+["ORD0235","28-05-2024","Headphones","Electronics","North","Delhi","Delhi","Keya Bora","Prepaid","26","6","20154","120924","Yes"],
+["ORD0253","28-05-2024","Mobile","Electronics","East","Kolkata","West Bengal","Farhan Loyal","Prepaid","28","4","31413","125652","Yes"],
+["ORD0304","28-05-2024","Smartwatch","Electronics","South","Chennai","Tamil Nadu","Baiju Balasubramanian","Prepaid","54","5","16308","81540","Yes"],
+["ORD0603","28-05-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Navya Badal","Prepaid","19","4","22364","89456","Yes"],
+["ORD0648","28-05-2024","Mobile","Electronics","South","Bangalore","Karnataka","Trisha Trivedi","COD","28","1","18157","18157","No"],
+["ORD0790","28-05-2024","TV","Electronics","West","Mumbai","Maharashtra","Seher Mangal","COD","18","8","49040","392320","Yes"],
+["ORD0246","29-05-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Faiyaz Srinivas","Prepaid","50","8","10240","81920","Yes"],
+["ORD0773","29-05-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Azad Jhaveri","COD","27","8","31672","253376","Yes"],
+["ORD0830","29-05-2024","Smartwatch","Electronics","South","Chennai","Tamil Nadu","Biju Bhandari","Prepaid","45","5","14530","72650","Yes"],
+["ORD0245","30-05-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Advik Goswami","COD","21","6","25345","152070","Yes"],
+["ORD0399","30-05-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Baiju Atwal","COD","31","9","34443","309987","Yes"],
+["ORD0914","30-05-2024","Camera","Electronics","South","Bangalore","Karnataka","Keya Badal","Prepaid","47","3","8493","25479","Yes"],
+["ORD0990","30-05-2024","Tablet","Electronics","West","Pune","Maharashtra","Mannat Saraf","COD","26","1","17219","17219","Yes"],
+["ORD0690","31-05-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Pari Raju","Prepaid","19","7","29027","203189","Yes"],
+["ORD0968","01-06-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Manikya Sarin","COD","59","5","48351","241755","Yes"],
+["ORD0982","01-06-2024","Tablet","Electronics","South","Bangalore","Karnataka","Ivana Raj","Prepaid","56","10","7484","74840","Yes"],
+["ORD0027","02-06-2024","Laptop","Electronics","West","Pune","Maharashtra","Samarth Jaggi","Prepaid","62","2","12173","24346","Yes"],
+["ORD0271","02-06-2024","Laptop","Electronics","South","Hyderabad","Telangana","Rohan Sidhu","Prepaid","50","1","18768","18768","Yes"],
+["ORD0955","03-06-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Rania Subramaniam","COD","37","4","27884","111536","Yes"],
+["ORD0664","04-06-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Kismat Kant","COD","24","3","44515","133545","No"],
+["ORD0692","04-06-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Hridaan Dixit","COD","57","10","34259","342590","Yes"],
+["ORD0190","05-06-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Rania Karan","COD","53","1","46847","46847","Yes"],
+["ORD0206","05-06-2024","Laptop","Electronics","West","Pune","Maharashtra","Madhup Manne","COD","36","1","40012","40012","Yes"],
+["ORD0973","05-06-2024","Tablet","Electronics","South","Hyderabad","Telangana","Shanaya Gour","Prepaid","48","5","17877","89385","Yes"],
+["ORD0076","06-06-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Mannat Dar","COD","57","9","18364","165276","Yes"],
+["ORD0425","06-06-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Lavanya Mann","Prepaid","59","7","20696","144872","Yes"],
+["ORD0687","06-06-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Lakshit Deep","COD","61","3","5977","17931","Yes"],
+["ORD0537","07-06-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Nirvaan Talwar","COD","38","1","8843","8843","No"],
+["ORD0713","07-06-2024","Camera","Electronics","North","Jaipur","Rajasthan","Divij Lad","Prepaid","44","7","27832","194824","Yes"],
+["ORD0870","07-06-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Charvi Chaudhary","Prepaid","22","2","34925","69850","Yes"],
+["ORD0610","08-06-2024","TV","Electronics","West","Mumbai","Maharashtra","Mehul Lal","Prepaid","40","2","25389","50778","No"],
+["ORD0673","08-06-2024","Laptop","Electronics","North","Delhi","Delhi","Lavanya Dora","Prepaid","60","10","32050","320500","Yes"],
+["ORD0697","08-06-2024","Mobile","Electronics","North","Jaipur","Rajasthan","Aaina Dugar","COD","33","7","39395","275765","Yes"],
+["ORD0701","08-06-2024","TV","Electronics","South","Hyderabad","Telangana","Kaira Sachar","COD","37","5","41132","205660","No"],
+["ORD0247","10-06-2024","Headphones","Electronics","North","Delhi","Delhi","Jayan Varughese","COD","46","2","47852","95704","Yes"],
+["ORD0540","10-06-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Ehsaan Sarin","Prepaid","46","7","43629","305403","No"],
+["ORD0728","10-06-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Saksham Chauhan","COD","22","3","5935","17805","Yes"],
+["ORD0823","10-06-2024","Laptop","Electronics","South","Hyderabad","Telangana","Veer Warrior","Prepaid","39","9","1165","10485","Yes"],
+["ORD0258","11-06-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Umang Tak","COD","34","4","35262","141048","Yes"],
+["ORD0592","11-06-2024","Headphones","Electronics","South","Bangalore","Karnataka","Saksham Sethi","Prepaid","64","4","21040","84160","Yes"],
+["ORD0760","11-06-2024","Camera","Electronics","East","Kolkata","West Bengal","Nakul Varty","Prepaid","60","6","14144","84864","Yes"],
+["ORD0980","11-06-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Drishya Dhaliwal","Prepaid","62","7","14523","101661","Yes"],
+["ORD0034","12-06-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Misha Jayaraman","COD","25","8","11419","91352","Yes"],
+["ORD0319","12-06-2024","Mobile","Electronics","South","Bangalore","Karnataka","Tara Sankaran","Prepaid","32","5","3029","15145","Yes"],
+["ORD0740","12-06-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Emir Chawla","Prepaid","52","5","30365","151825","No"],
+["ORD0506","13-06-2024","TV","Electronics","West","Mumbai","Maharashtra","Amani Borra","COD","51","9","37756","339804","Yes"],
+["ORD0376","14-06-2024","Camera","Electronics","South","Hyderabad","Telangana","Ojas Rastogi","COD","41","6","19861","119166","Yes"],
+["ORD0573","14-06-2024","Smartwatch","Electronics","South","Hyderabad","Telangana","Anya Kothari","Prepaid","20","5","13157","65785","Yes"],
+["ORD0599","15-06-2024","Laptop","Electronics","North","Jaipur","Rajasthan","Prerak Kala","Prepaid","63","1","6120","6120","No"],
+["ORD0386","16-06-2024","Camera","Electronics","South","Hyderabad","Telangana","Anaya Lall","COD","34","7","40943","286601","Yes"],
+["ORD0394","16-06-2024","Headphones","Electronics","South","Bangalore","Karnataka","Indrans Kata","COD","60","1","12784","12784","Yes"],
+["ORD0478","16-06-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Jivika Arya","COD","45","9","19916","179244","Yes"],
+["ORD0761","16-06-2024","Laptop","Electronics","South","Hyderabad","Telangana","Advika Mahal","COD","18","7","40514","283598","Yes"],
+["ORD0178","17-06-2024","Smartwatch","Electronics","North","Delhi","Delhi","Raghav Halder","Prepaid","41","1","20564","20564","Yes"],
+["ORD0536","17-06-2024","Laptop","Electronics","South","Bangalore","Karnataka","Anay Bajaj","COD","54","3","9537","28611","Yes"],
+["ORD0556","17-06-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Myra Sha","COD","28","8","32560","260480","No"],
+["ORD0723","18-06-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Ryan Boase","COD","19","8","6816","54528","Yes"],
+["ORD0387","19-06-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Hiran Issac","Prepaid","33","10","16921","169210","Yes"],
+["ORD0014","20-06-2024","TV","Electronics","South","Bangalore","Karnataka","Charvi Brahmbhatt","COD","45","1","7063","7063","Yes"],
+["ORD0546","21-06-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Devansh Ben","COD","64","3","12539","37617","Yes"],
+["ORD0717","21-06-2024","Smartwatch","Electronics","West","Ahmedabad","Gujarat","Tara Sarin","COD","58","3","20329","60987","Yes"],
+["ORD0365","22-06-2024","Headphones","Electronics","North","Delhi","Delhi","Hansh Keer","COD","63","10","1438","14380","Yes"],
+["ORD0598","23-06-2024","Camera","Electronics","West","Pune","Maharashtra","Indrans Johal","Prepaid","50","7","1460","10220","No"],
+["ORD0639","23-06-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Umang Gaba","COD","60","8","40150","321200","No"],
+["ORD0720","23-06-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Urvi Koshy","Prepaid","30","9","38631","347679","Yes"],
+["ORD0779","23-06-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Armaan Hayer","COD","39","3","24741","74223","Yes"],
+["ORD0904","23-06-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Nayantara Shukla","Prepaid","46","8","11758","94064","Yes"],
+["ORD0947","23-06-2024","TV","Electronics","West","Mumbai","Maharashtra","Eva Ghosh","Prepaid","33","6","35109","210654","Yes"],
+["ORD0005","25-06-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Yasmin Dhar","COD","59","9","48819","439371","Yes"],
+["ORD0273","25-06-2024","Headphones","Electronics","West","Pune","Maharashtra","Eshani Datta","Prepaid","57","4","46081","184324","Yes"],
+["ORD0441","25-06-2024","Tablet","Electronics","West","Pune","Maharashtra","Anika Badal","COD","48","2","13146","26292","Yes"],
+["ORD0703","25-06-2024","Mobile","Electronics","South","Bangalore","Karnataka","Ehsaan Loke","Prepaid","19","3","5425","16275","Yes"],
+["ORD0826","25-06-2024","Camera","Electronics","East","Kolkata","West Bengal","Sara Mahajan","COD","21","3","38505","115515","Yes"],
+["ORD0018","26-06-2024","TV","Electronics","West","Mumbai","Maharashtra","Mahika Mane","Prepaid","54","1","47969","47969","No"],
+["ORD0030","26-06-2024","Tablet","Electronics","West","Pune","Maharashtra","Oorja Virk","Prepaid","39","1","48896","48896","Yes"],
+["ORD0054","26-06-2024","Laptop","Electronics","South","Hyderabad","Telangana","Ela Chauhan","Prepaid","27","5","31634","158170","Yes"],
+["ORD0434","27-06-2024","Smartwatch","Electronics","South","Hyderabad","Telangana","Yuvaan Zacharia","Prepaid","44","8","16586","132688","Yes"],
+["ORD0446","27-06-2024","Camera","Electronics","West","Pune","Maharashtra","Alisha Bala","Prepaid","61","1","23856","23856","Yes"],
+["ORD0404","29-06-2024","Camera","Electronics","South","Hyderabad","Telangana","Abram Gaba","Prepaid","35","2","49626","99252","Yes"],
+["ORD0439","29-06-2024","Headphones","Electronics","North","Delhi","Delhi","Riaan Walia","Prepaid","36","9","48890","440010","No"],
+["ORD0472","29-06-2024","Mobile","Electronics","South","Hyderabad","Telangana","Shlok Gala","Prepaid","32","5","17859","89295","Yes"],
+["ORD0484","29-06-2024","Laptop","Electronics","North","Jaipur","Rajasthan","Dhanuk Dutt","COD","45","1","30977","30977","Yes"],
+["ORD0199","30-06-2024","TV","Electronics","West","Mumbai","Maharashtra","Armaan Dugal","COD","30","6","33954","203724","Yes"],
+["ORD0044","01-07-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Emir Ramachandran","Prepaid","27","7","44666","312662","Yes"],
+["ORD0748","01-07-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Rania Saraf","Prepaid","47","7","46457","325199","Yes"],
+["ORD0893","01-07-2024","TV","Electronics","West","Mumbai","Maharashtra","Hridaan Devan","Prepaid","43","9","22819","205371","Yes"],
+["ORD0306","02-07-2024","Camera","Electronics","East","Kolkata","West Bengal","Miraan Gour","Prepaid","50","8","37538","300304","Yes"],
+["ORD0035","03-07-2024","TV","Electronics","South","Hyderabad","Telangana","Vihaan Madan","Prepaid","51","8","37347","298776","Yes"],
+["ORD0165","03-07-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Kimaya Ghosh","Prepaid","24","7","33097","231679","Yes"],
+["ORD0207","03-07-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Vedika Anne","Prepaid","41","8","38107","304856","Yes"],
+["ORD0447","03-07-2024","Mobile","Electronics","South","Bangalore","Karnataka","Ivan Sant","COD","35","4","33032","132128","Yes"],
+["ORD0677","03-07-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Ishita Dixit","COD","34","1","13469","13469","Yes"],
+["ORD0423","05-07-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Adah Seshadri","COD","57","10","10838","108380","Yes"],
+["ORD0085","06-07-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Jayesh D’Alia","COD","33","5","9186","45930","Yes"],
+["ORD0671","06-07-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Bhamini Dhingra","Prepaid","23","4","10040","40160","Yes"],
+["ORD0952","06-07-2024","Camera","Electronics","West","Pune","Maharashtra","Kiaan Brar","Prepaid","54","2","25457","50914","Yes"],
+["ORD0119","07-07-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Umang Sengupta","Prepaid","64","7","32485","227395","Yes"],
+["ORD0852","07-07-2024","Laptop","Electronics","South","Hyderabad","Telangana","Diya Balasubramanian","Prepaid","24","1","47434","47434","Yes"],
+["ORD0338","08-07-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Nirvi Vora","Prepaid","21","10","47509","475090","Yes"],
+["ORD0430","08-07-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Pari Bedi","Prepaid","20","6","25733","154398","Yes"],
+["ORD0680","08-07-2024","TV","Electronics","West","Pune","Maharashtra","Pranay Seth","COD","34","9","11882","106938","No"],
+["ORD0212","09-07-2024","Headphones","Electronics","South","Bangalore","Karnataka","Jayan Dyal","Prepaid","49","7","27588","193116","Yes"],
+["ORD0249","09-07-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Kiaan Borra","Prepaid","26","7","23540","164780","Yes"],
+["ORD0505","09-07-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Romil Amble","COD","20","2","10554","21108","Yes"],
+["ORD0596","10-07-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Arnav Chhabra","Prepaid","38","6","33057","198342","Yes"],
+["ORD0200","11-07-2024","Mobile","Electronics","North","Delhi","Delhi","Aaina Sehgal","COD","31","4","10398","41592","Yes"],
+["ORD0051","12-07-2024","TV","Electronics","West","Pune","Maharashtra","Zeeshan Malhotra","Prepaid","19","2","42333","84666","Yes"],
+["ORD0380","12-07-2024","Tablet","Electronics","South","Bangalore","Karnataka","Indranil Gara","Prepaid","49","2","36720","73440","Yes"],
+["ORD0405","12-07-2024","Camera","Electronics","East","Kolkata","West Bengal","Reyansh Dada","Prepaid","59","8","39034","312272","Yes"],
+["ORD0538","12-07-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Tiya Iyer","COD","34","2","18614","37228","Yes"],
+["ORD0689","12-07-2024","Smartwatch","Electronics","West","Ahmedabad","Gujarat","Ela Iyer","Prepaid","59","7","40621","284347","Yes"],
+["ORD0577","13-07-2024","Mobile","Electronics","West","Mumbai","Maharashtra","Aaryahi Varty","Prepaid","48","7","39594","277158","No"],
+["ORD0804","13-07-2024","Laptop","Electronics","South","Hyderabad","Telangana","Keya Chaudhry","COD","19","10","37831","378310","Yes"],
+["ORD0148","14-07-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Priyansh Brahmbhatt","COD","42","1","46443","46443","Yes"],
+["ORD0837","14-07-2024","Headphones","Electronics","North","Delhi","Delhi","Saanvi Dass","COD","33","4","15781","63124","Yes"],
+["ORD0251","15-07-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Chirag Wadhwa","COD","37","10","18191","181910","Yes"],
+["ORD0403","15-07-2024","Camera","Electronics","South","Bangalore","Karnataka","Nitara Handa","COD","51","8","42242","337936","No"],
+["ORD0460","15-07-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Indrans Manne","Prepaid","27","6","37597","225582","Yes"],
+["ORD0535","15-07-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Alia Sandal","COD","30","6","9930","59580","No"],
+["ORD0903","15-07-2024","Tablet","Electronics","South","Bangalore","Karnataka","Jivika Sagar","COD","25","5","5456","27280","Yes"],
+["ORD0098","17-07-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Kismat Sibal","Prepaid","23","9","8346","75114","Yes"],
+["ORD0544","17-07-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Romil Chand","Prepaid","54","6","42694","256164","Yes"],
+["ORD0746","17-07-2024","Tablet","Electronics","South","Bangalore","Karnataka","Heer Bahl","COD","61","3","14626","43878","Yes"],
+["ORD0753","17-07-2024","TV","Electronics","South","Bangalore","Karnataka","Dishani Shukla","COD","33","9","8773","78957","Yes"],
+["ORD0840","17-07-2024","TV","Electronics","North","Delhi","Delhi","Mahika Sarna","COD","53","8","25230","201840","Yes"],
+["ORD0172","18-07-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Siya Krishnamurthy","COD","54","8","24342","194736","Yes"],
+["ORD0637","18-07-2024","Laptop","Electronics","South","Hyderabad","Telangana","Saanvi Vala","Prepaid","51","6","3043","18258","Yes"],
+["ORD0539","19-07-2024","Laptop","Electronics","North","Jaipur","Rajasthan","Amani Chahal","COD","44","4","19962","79848","No"],
+["ORD0641","20-07-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Lagan Lata","Prepaid","45","7","24565","171955","Yes"],
+["ORD0742","20-07-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Manikya Butala","COD","28","10","23577","235770","No"],
+["ORD0521","21-07-2024","Laptop","Electronics","East","Kolkata","West Bengal","Nitya Iyer","COD","27","6","26838","161028","Yes"],
+["ORD0082","22-07-2024","TV","Electronics","West","Ahmedabad","Gujarat","Divit Kata","Prepaid","30","3","35805","107415","Yes"],
+["ORD0216","23-07-2024","Camera","Electronics","West","Mumbai","Maharashtra","Lavanya Ahuja","COD","34","5","16339","81695","Yes"],
+["ORD0389","23-07-2024","Camera","Electronics","West","Pune","Maharashtra","Lakshit Chand","COD","55","10","1846","18460","Yes"],
+["ORD0686","23-07-2024","Tablet","Electronics","South","Hyderabad","Telangana","Prisha Bawa","Prepaid","39","10","24419","244190","No"],
+["ORD0130","24-07-2024","TV","Electronics","West","Ahmedabad","Gujarat","Charvi Char","COD","49","2","37487","74974","Yes"],
+["ORD0620","24-07-2024","TV","Electronics","North","Delhi","Delhi","Mehul Atwal","COD","62","2","18482","36964","No"],
+["ORD0863","24-07-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Mamooty Bansal","COD","32","4","9034","36136","Yes"],
+["ORD0901","24-07-2024","TV","Electronics","North","Jaipur","Rajasthan","Prerak Kala","COD","46","7","32939","230573","Yes"],
+["ORD0950","24-07-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Anahi Garg","Prepaid","62","5","14030","70150","Yes"],
+["ORD0426","25-07-2024","Camera","Electronics","West","Mumbai","Maharashtra","Siya Chaudhry","Prepaid","51","7","14770","103390","Yes"],
+["ORD0589","25-07-2024","TV","Electronics","West","Pune","Maharashtra","Keya Chander","Prepaid","60","5","7317","36585","No"],
+["ORD0909","25-07-2024","Camera","Electronics","South","Hyderabad","Telangana","Nayantara Thakur","Prepaid","32","4","40774","163096","Yes"],
+["ORD0208","26-07-2024","Headphones","Electronics","North","Delhi","Delhi","Manikya Keer","Prepaid","34","3","3961","11883","Yes"],
+["ORD0233","27-07-2024","TV","Electronics","East","Kolkata","West Bengal","Abram Lalla","Prepaid","42","7","13994","97958","Yes"],
+["ORD0388","28-07-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Vihaan Kunda","COD","31","6","24612","147672","Yes"],
+["ORD0433","28-07-2024","Headphones","Electronics","North","Delhi","Delhi","Yuvaan Rastogi","Prepaid","33","2","25096","50192","No"],
+["ORD0925","28-07-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Hridaan Tank","COD","46","6","21256","127536","Yes"],
+["ORD0792","30-07-2024","TV","Electronics","South","Chennai","Tamil Nadu","Shamik Dash","COD","57","4","32070","128280","Yes"],
+["ORD0979","30-07-2024","Tablet","Electronics","North","Delhi","Delhi","Saksham Wagle","COD","53","5","24778","123890","Yes"],
+["ORD0017","31-07-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Misha Kari","COD","28","5","49567","247835","Yes"],
+["ORD0173","31-07-2024","TV","Electronics","South","Chennai","Tamil Nadu","Badal Dugal","Prepaid","31","4","18219","72876","Yes"],
+["ORD0310","31-07-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Hansh Kothari","COD","20","5","46693","233465","Yes"],
+["ORD0595","31-07-2024","TV","Electronics","West","Mumbai","Maharashtra","Samar Gupta","Prepaid","65","9","7437","66933","No"],
+["ORD0195","01-08-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Fateh Korpal","COD","41","9","18502","166518","No"],
+["ORD0502","01-08-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Dharmajan Mallick","COD","44","8","7867","62936","No"],
+["ORD0504","01-08-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Shayak Shan","COD","22","9","21186","190674","Yes"],
+["ORD0136","02-08-2024","TV","Electronics","East","Kolkata","West Bengal","Armaan Chander","COD","44","5","31203","156015","No"],
+["ORD0109","03-08-2024","TV","Electronics","West","Pune","Maharashtra","Arhaan Soni","COD","43","5","34866","174330","Yes"],
+["ORD0524","03-08-2024","Camera","Electronics","East","Kolkata","West Bengal","Shanaya Kar","COD","30","9","16368","147312","Yes"],
+["ORD0616","03-08-2024","Smartwatch","Electronics","South","Chennai","Tamil Nadu","Piya Varty","COD","55","5","3450","17250","No"],
+["ORD0929","03-08-2024","Laptop","Electronics","East","Kolkata","West Bengal","Ritvik Dyal","COD","61","10","13884","138840","Yes"],
+["ORD0236","04-08-2024","Camera","Electronics","North","Jaipur","Rajasthan","Damini Deshpande","Prepaid","34","10","30171","301710","Yes"],
+["ORD0878","04-08-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Reyansh Mahajan","Prepaid","43","10","29541","295410","Yes"],
+["ORD0791","05-08-2024","Camera","Electronics","North","Delhi","Delhi","Mamooty Jani","Prepaid","52","1","5370","5370","Yes"],
+["ORD0962","05-08-2024","Headphones","Electronics","North","Delhi","Delhi","Manjari Gera","COD","19","1","9092","9092","Yes"],
+["ORD0924","06-08-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Neysa Bawa","Prepaid","18","2","32712","65424","Yes"],
+["ORD0265","07-08-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Sara Vala","COD","32","8","6933","55464","Yes"],
+["ORD0395","07-08-2024","TV","Electronics","North","Jaipur","Rajasthan","Aaina Sharaf","COD","27","9","5171","46539","Yes"],
+["ORD0817","07-08-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Miraan Chacko","COD","61","1","23993","23993","No"],
+["ORD0084","08-08-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Dharmajan Korpal","Prepaid","26","2","43947","87894","Yes"],
+["ORD0262","08-08-2024","TV","Electronics","South","Bangalore","Karnataka","Eshani Brahmbhatt","COD","57","4","25322","101288","Yes"],
+["ORD0718","08-08-2024","Mobile","Electronics","South","Bangalore","Karnataka","Pihu Gupta","Prepaid","44","1","49637","49637","No"],
+["ORD0800","08-08-2024","TV","Electronics","South","Hyderabad","Telangana","Mamooty Vyas","Prepaid","50","6","37891","227346","Yes"],
+["ORD0806","08-08-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Shaan Mandal","Prepaid","33","6","16464","98784","Yes"],
+["ORD0613","09-08-2024","Mobile","Electronics","West","Pune","Maharashtra","Madhup Dey","Prepaid","37","3","21355","64065","No"],
+["ORD0634","09-08-2024","Laptop","Electronics","West","Pune","Maharashtra","Kimaya Kala","Prepaid","26","8","6979","55832","No"],
+["ORD0861","09-08-2024","Headphones","Electronics","South","Hyderabad","Telangana","Saanvi Sule","Prepaid","45","6","18727","112362","Yes"],
+["ORD0070","10-08-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Veer Babu","COD","23","10","37291","372910","Yes"],
+["ORD0111","10-08-2024","TV","Electronics","South","Bangalore","Karnataka","Indranil Krishnan","Prepaid","59","9","16793","151137","Yes"],
+["ORD1000","10-08-2024","Camera","Electronics","North","Delhi","Delhi","Raghav Agrawal","COD","43","3","49409","148227","Yes"],
+["ORD0344","11-08-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Mahika Chakrabarti","COD","58","10","21626","216260","Yes"],
+["ORD0313","12-08-2024","Mobile","Electronics","East","Kolkata","West Bengal","Devansh Balan","COD","25","6","8971","53826","Yes"],
+["ORD0346","12-08-2024","TV","Electronics","North","Delhi","Delhi","Lakshay Sastry","COD","22","5","47704","238520","Yes"],
+["ORD0741","12-08-2024","Mobile","Electronics","South","Bangalore","Karnataka","Anika Dhillon","COD","20","10","47429","474290","Yes"],
+["ORD0766","12-08-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Renee Mannan","COD","59","8","41523","332184","Yes"],
+["ORD0809","12-08-2024","Headphones","Electronics","North","Delhi","Delhi","Samaira Dada","Prepaid","51","7","26313","184191","Yes"],
+["ORD0627","13-08-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Samar Thakkar","COD","62","9","31962","287658","No"],
+["ORD0063","14-08-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Kartik Rastogi","Prepaid","33","7","45454","318178","Yes"],
+["ORD0280","14-08-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Fateh Badal","COD","59","4","43746","174984","Yes"],
+["ORD0685","14-08-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Aaina Jani","COD","51","7","31069","217483","No"],
+["ORD0917","14-08-2024","Headphones","Electronics","South","Hyderabad","Telangana","Lagan Sengupta","COD","63","5","3053","15265","Yes"],
+["ORD0302","15-08-2024","Mobile","Electronics","West","Mumbai","Maharashtra","Nehmat Gole","COD","23","1","7747","7747","Yes"],
+["ORD0942","15-08-2024","Smartwatch","Electronics","South","Chennai","Tamil Nadu","Elakshi Sehgal","Prepaid","25","7","27451","192157","Yes"],
+["ORD0944","15-08-2024","Headphones","Electronics","South","Bangalore","Karnataka","Vivaan Sanghvi","Prepaid","54","1","1729","1729","Yes"],
+["ORD0240","16-08-2024","Tablet","Electronics","North","Delhi","Delhi","Kiara Dhar","COD","35","10","5511","55110","Yes"],
+["ORD0355","16-08-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Biju Ram","Prepaid","63","5","3548","17740","Yes"],
+["ORD0486","16-08-2024","TV","Electronics","East","Kolkata","West Bengal","Kimaya Gera","COD","54","3","17648","52944","Yes"],
+["ORD0630","16-08-2024","Mobile","Electronics","South","Hyderabad","Telangana","Manikya Saran","Prepaid","56","3","26840","80520","Yes"],
+["ORD0473","17-08-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Jivin Chana","COD","49","1","31121","31121","Yes"],
+["ORD0683","17-08-2024","Headphones","Electronics","South","Bangalore","Karnataka","Nehmat Venkatesh","Prepaid","50","8","16743","133944","Yes"],
+["ORD0995","17-08-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Taimur Bhasin","Prepaid","47","1","29819","29819","Yes"],
+["ORD0642","18-08-2024","Headphones","Electronics","South","Bangalore","Karnataka","Taimur Saraf","Prepaid","47","1","15108","15108","Yes"],
+["ORD0756","18-08-2024","Tablet","Electronics","West","Pune","Maharashtra","Arhaan Srinivasan","COD","49","6","34942","209652","Yes"],
+["ORD0134","20-08-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Stuvan Jani","Prepaid","26","6","25998","155988","Yes"],
+["ORD0432","20-08-2024","Laptop","Electronics","South","Hyderabad","Telangana","Kaira Warrior","COD","34","2","4405","8810","Yes"],
+["ORD0466","20-08-2024","Camera","Electronics","West","Pune","Maharashtra","Saanvi De","Prepaid","41","6","40238","241428","Yes"],
+["ORD0726","20-08-2024","Tablet","Electronics","East","Kolkata","West Bengal","Ranbir Sachar","COD","25","5","23432","117160","Yes"],
+["ORD0769","20-08-2024","Tablet","Electronics","South","Bangalore","Karnataka","Akarsh Sekhon","Prepaid","45","1","49758","49758","Yes"],
+["ORD0113","21-08-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Taimur Venkataraman","COD","31","1","35824","35824","Yes"],
+["ORD0135","21-08-2024","Tablet","Electronics","West","Pune","Maharashtra","Darshit Bhatt","Prepaid","38","8","44602","356816","Yes"],
+["ORD0161","21-08-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Zain Deep","COD","63","5","26160","130800","Yes"],
+["ORD0851","21-08-2024","Laptop","Electronics","North","Delhi","Delhi","Stuvan Sami","Prepaid","59","10","19685","196850","Yes"],
+["ORD0897","21-08-2024","Mobile","Electronics","North","Delhi","Delhi","Uthkarsh Malhotra","Prepaid","26","3","28321","84963","Yes"],
+["ORD0910","21-08-2024","Smartwatch","Electronics","North","Delhi","Delhi","Kavya Bora","Prepaid","39","6","49941","299646","Yes"],
+["ORD0719","22-08-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Jiya Bera","Prepaid","22","6","31939","191634","Yes"],
+["ORD0020","24-08-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Badal Shetty","COD","59","3","7008","21024","Yes"],
+["ORD0890","24-08-2024","Tablet","Electronics","East","Kolkata","West Bengal","Divyansh Rao","Prepaid","56","9","8617","77553","Yes"],
+["ORD0398","25-08-2024","TV","Electronics","West","Pune","Maharashtra","Hansh Sarin","COD","56","10","4130","41300","Yes"],
+["ORD0559","25-08-2024","TV","Electronics","West","Mumbai","Maharashtra","Drishya Bhandari","Prepaid","18","1","48616","48616","Yes"],
+["ORD0646","25-08-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Ranbir Bumb","COD","64","1","40025","40025","Yes"],
+["ORD0615","26-08-2024","Laptop","Electronics","North","Delhi","Delhi","Bhamini Bose","COD","60","10","45941","459410","Yes"],
+["ORD0915","26-08-2024","TV","Electronics","West","Pune","Maharashtra","Sara Keer","Prepaid","33","2","30415","60830","Yes"],
+["ORD0007","27-08-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Reyansh Khatri","COD","36","9","21295","191655","Yes"],
+["ORD0201","27-08-2024","Laptop","Electronics","South","Bangalore","Karnataka","Aarush Chaudry","COD","45","10","21554","215540","Yes"],
+["ORD0056","28-08-2024","Mobile","Electronics","South","Bangalore","Karnataka","Veer Handa","COD","58","10","39951","399510","Yes"],
+["ORD0252","28-08-2024","Laptop","Electronics","East","Kolkata","West Bengal","Tanya Yohannan","Prepaid","23","7","46351","324457","Yes"],
+["ORD0264","28-08-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Romil Seth","COD","53","9","39255","353295","Yes"],
+["ORD0356","28-08-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Drishya Chandran","COD","24","7","13693","95851","Yes"],
+["ORD0448","28-08-2024","TV","Electronics","West","Mumbai","Maharashtra","Rhea Swamy","COD","35","1","1604","1604","Yes"],
+["ORD0767","28-08-2024","Mobile","Electronics","North","Jaipur","Rajasthan","Vardaniya Garg","Prepaid","29","1","3476","3476","Yes"],
+["ORD0244","29-08-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Tarini Rajan","Prepaid","22","8","28337","226696","Yes"],
+["ORD0494","29-08-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Sana Ahuja","COD","60","10","5103","51030","Yes"],
+["ORD0554","29-08-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Ela Sani","Prepaid","22","4","28608","114432","Yes"],
+["ORD0125","30-08-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Anahi Kaur","COD","46","9","19724","177516","Yes"],
+["ORD0223","31-08-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Kanav Cheema","Prepaid","28","3","46471","139413","Yes"],
+["ORD0307","31-08-2024","Headphones","Electronics","South","Bangalore","Karnataka","Azad Rege","Prepaid","33","4","22306","89224","Yes"],
+["ORD0574","31-08-2024","Tablet","Electronics","West","Pune","Maharashtra","Jiya Sachdeva","Prepaid","56","8","8686","69488","Yes"],
+["ORD0835","31-08-2024","TV","Electronics","West","Pune","Maharashtra","Stuvan Sheth","Prepaid","57","5","46965","234825","Yes"],
+["ORD0341","01-09-2024","TV","Electronics","South","Bangalore","Karnataka","Kaira Venkataraman","Prepaid","51","6","44113","264678","Yes"],
+["ORD0892","01-09-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Hunar Shankar","Prepaid","25","10","48177","481770","Yes"],
+["ORD0957","01-09-2024","Camera","Electronics","South","Hyderabad","Telangana","Oorja Loyal","Prepaid","30","9","34715","312435","Yes"],
+["ORD0033","02-09-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Shlok Chowdhury","Prepaid","59","8","30928","247424","Yes"],
+["ORD0928","02-09-2024","Laptop","Electronics","South","Hyderabad","Telangana","Shamik Gara","COD","31","4","16677","66708","Yes"],
+["ORD0406","04-09-2024","Tablet","Electronics","West","Pune","Maharashtra","Aradhya Dara","Prepaid","52","1","11103","11103","Yes"],
+["ORD0491","04-09-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Anya Khatri","COD","27","10","2438","24380","Yes"],
+["ORD0550","04-09-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Anika Karnik","COD","27","6","12751","76506","No"],
+["ORD0379","05-09-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Hansh Kalita","COD","58","6","41687","250122","Yes"],
+["ORD0694","05-09-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Urvi Khatri","COD","45","7","26122","182854","No"],
+["ORD0883","05-09-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Pranay Walia","Prepaid","35","2","43774","87548","Yes"],
+["ORD0154","06-09-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Lakshit Mannan","COD","48","6","43676","262056","Yes"],
+["ORD0631","06-09-2024","Tablet","Electronics","West","Pune","Maharashtra","Yakshit Kashyap","Prepaid","44","3","11180","33540","No"],
+["ORD0807","07-09-2024","Laptop","Electronics","North","Jaipur","Rajasthan","Amira Mallick","COD","52","4","25876","103504","Yes"],
+["ORD0991","07-09-2024","Laptop","Electronics","West","Pune","Maharashtra","Ojas Kuruvilla","COD","59","5","3129","15645","Yes"],
+["ORD0737","08-09-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Pranay Jain","Prepaid","58","4","11748","46992","No"],
+["ORD0215","09-09-2024","Mobile","Electronics","South","Chennai","Tamil Nadu","Stuvan Andra","Prepaid","29","5","34838","174190","Yes"],
+["ORD0551","09-09-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Hansh Lad","Prepaid","32","8","10464","83712","Yes"],
+["ORD0647","09-09-2024","Mobile","Electronics","South","Bangalore","Karnataka","Dharmajan Rege","Prepaid","44","5","44789","223945","No"],
+["ORD0879","09-09-2024","TV","Electronics","West","Mumbai","Maharashtra","Adira Shere","Prepaid","30","3","45449","136347","Yes"],
+["ORD0464","10-09-2024","Headphones","Electronics","South","Hyderabad","Telangana","Heer Sane","COD","48","2","40097","80194","Yes"],
+["ORD0591","10-09-2024","Smartwatch","Electronics","North","Delhi","Delhi","Saanvi Ratti","COD","18","4","47190","188760","No"],
+["ORD0836","10-09-2024","Camera","Electronics","South","Bangalore","Karnataka","Indrans Halder","Prepaid","25","4","31837","127348","Yes"],
+["ORD0145","11-09-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Inaaya  Dugar","COD","37","4","24593","98372","Yes"],
+["ORD0153","11-09-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Inaaya  Solanki","COD","29","8","20501","164008","Yes"],
+["ORD0714","11-09-2024","Smartwatch","Electronics","North","Delhi","Delhi","Anay Mand","Prepaid","27","6","4378","26268","No"],
+["ORD0781","11-09-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Vardaniya Sinha","COD","32","3","40964","122892","Yes"],
+["ORD0938","11-09-2024","Smartwatch","Electronics","North","Delhi","Delhi","Sana Bera","Prepaid","38","5","41906","209530","Yes"],
+["ORD0024","12-09-2024","Smartwatch","Electronics","North","Delhi","Delhi","Piya Sachar","COD","60","7","32145","225015","Yes"],
+["ORD0047","12-09-2024","TV","Electronics","South","Chennai","Tamil Nadu","Eshani Seth","Prepaid","52","4","9478","37912","Yes"],
+["ORD0467","12-09-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Keya Devi","Prepaid","41","4","16668","66672","Yes"],
+["ORD0776","12-09-2024","Mobile","Electronics","South","Bangalore","Karnataka","Miraan Tella","Prepaid","26","2","11669","23338","Yes"],
+["ORD0401","13-09-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Umang Bal","COD","48","3","16807","50421","Yes"],
+["ORD0888","13-09-2024","TV","Electronics","North","Jaipur","Rajasthan","Zoya Sastry","Prepaid","25","1","13392","13392","Yes"],
+["ORD0091","14-09-2024","Smartwatch","Electronics","South","Hyderabad","Telangana","Shanaya Choudhury","Prepaid","52","6","32777","196662","Yes"],
+["ORD0492","14-09-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Piya Hora","Prepaid","41","2","6502","13004","Yes"],
+["ORD0557","14-09-2024","Smartwatch","Electronics","North","Delhi","Delhi","Priyansh Sule","Prepaid","43","9","14767","132903","No"],
+["ORD0305","15-09-2024","TV","Electronics","East","Kolkata","West Bengal","Romil Wagle","Prepaid","28","8","37812","302496","Yes"],
+["ORD0513","15-09-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Parinaaz Sarraf","COD","27","7","33795","236565","Yes"],
+["ORD0661","15-09-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Mannat Gill","COD","40","7","41194","288358","Yes"],
+["ORD0874","15-09-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Lavanya Dua","Prepaid","25","3","34898","104694","Yes"],
+["ORD0101","16-09-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Tanya Rajagopal","COD","26","5","25435","127175","Yes"],
+["ORD0221","16-09-2024","TV","Electronics","East","Kolkata","West Bengal","Ehsaan Toor","COD","44","5","2637","13185","Yes"],
+["ORD0628","16-09-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Advik Bakshi","Prepaid","64","4","47155","188620","Yes"],
+["ORD0945","17-09-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Aayush Salvi","COD","33","4","26091","104364","Yes"],
+["ORD0065","18-09-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Dishani Bajwa","Prepaid","64","4","8937","35748","Yes"],
+["ORD0415","18-09-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Nirvi Sagar","Prepaid","23","6","44125","264750","No"],
+["ORD0772","18-09-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Kanav Shanker","Prepaid","19","8","34554","276432","Yes"],
+["ORD0829","18-09-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Mannat Chaudhry","Prepaid","22","1","38428","38428","Yes"],
+["ORD0900","18-09-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Lakshit Aggarwal","Prepaid","39","1","25199","25199","Yes"],
+["ORD0932","18-09-2024","Headphones","Electronics","North","Delhi","Delhi","Siya Lata","Prepaid","43","9","39407","354663","Yes"],
+["ORD0297","19-09-2024","Camera","Electronics","North","Delhi","Delhi","Abram Khare","Prepaid","20","5","10574","52870","Yes"],
+["ORD0326","19-09-2024","Camera","Electronics","South","Bangalore","Karnataka","Misha Taneja","COD","29","7","10041","70287","Yes"],
+["ORD0424","19-09-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Mohanlal Sangha","COD","40","4","3397","13588","Yes"],
+["ORD0842","19-09-2024","Laptop","Electronics","West","Pune","Maharashtra","Ela Sura","COD","47","3","14478","43434","Yes"],
+["ORD0898","19-09-2024","Headphones","Electronics","West","Pune","Maharashtra","Dishani Sen","Prepaid","21","4","6884","27536","Yes"],
+["ORD0110","20-09-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Divit Borde","COD","25","6","46093","276558","Yes"],
+["ORD0117","20-09-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Biju Chokshi","Prepaid","28","3","26406","79218","Yes"],
+["ORD0118","20-09-2024","Smartwatch","Electronics","South","Hyderabad","Telangana","Kaira Kara","Prepaid","27","4","40106","160424","Yes"],
+["ORD0374","20-09-2024","Headphones","Electronics","South","Bangalore","Karnataka","Anika Saxena","COD","65","9","29958","269622","Yes"],
+["ORD0625","20-09-2024","Camera","Electronics","West","Mumbai","Maharashtra","Jayan Baral","Prepaid","50","2","35820","71640","Yes"],
+["ORD0682","20-09-2024","Mobile","Electronics","West","Pune","Maharashtra","Sana Dar","COD","47","2","6987","13974","Yes"],
+["ORD0828","20-09-2024","TV","Electronics","North","Delhi","Delhi","Gokul Kapoor","Prepaid","47","3","21019","63057","Yes"],
+["ORD0053","21-09-2024","Headphones","Electronics","South","Bangalore","Karnataka","Indrajit Bora","COD","65","3","11953","35859","Yes"],
+["ORD0288","22-09-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Himmat Walla","COD","26","8","18749","149992","Yes"],
+["ORD0612","22-09-2024","Headphones","Electronics","West","Pune","Maharashtra","Nirvi Chowdhury","COD","62","9","3603","32427","No"],
+["ORD0839","22-09-2024","TV","Electronics","West","Mumbai","Maharashtra","Hansh Loyal","COD","28","5","30140","150700","Yes"],
+["ORD0012","23-09-2024","TV","Electronics","West","Mumbai","Maharashtra","Elakshi Gola","Prepaid","59","3","47638","142914","Yes"],
+["ORD0045","23-09-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Heer Sarma","COD","18","2","8865","17730","Yes"],
+["ORD0672","23-09-2024","Mobile","Electronics","West","Pune","Maharashtra","Lakshit Vala","COD","26","9","31028","279252","No"],
+["ORD0700","23-09-2024","Mobile","Electronics","West","Pune","Maharashtra","Aaina Kakar","Prepaid","63","7","32936","230552","Yes"],
+["ORD0939","23-09-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Akarsh Mander","Prepaid","25","9","37201","334809","Yes"],
+["ORD0508","24-09-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Zeeshan Rau","Prepaid","27","6","44389","266334","Yes"],
+["ORD0751","24-09-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Kabir Malhotra","Prepaid","64","8","7136","57088","No"],
+["ORD0562","25-09-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Kabir Doshi","COD","26","5","4226","21130","Yes"],
+["ORD0873","25-09-2024","Mobile","Electronics","West","Pune","Maharashtra","Sahil Kota","Prepaid","65","8","22895","183160","Yes"],
+["ORD0951","25-09-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Tushar Lal","Prepaid","51","9","46896","422064","Yes"],
+["ORD0105","26-09-2024","TV","Electronics","West","Ahmedabad","Gujarat","Siya Sengupta","Prepaid","55","2","49355","98710","Yes"],
+["ORD0693","26-09-2024","Tablet","Electronics","North","Delhi","Delhi","Riaan Dash","Prepaid","34","9","21409","192681","No"],
+["ORD0203","27-09-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Pranay Trivedi","COD","61","9","37033","333297","Yes"],
+["ORD0933","27-09-2024","Headphones","Electronics","East","Kolkata","West Bengal","Lagan Khalsa","COD","26","2","44246","88492","Yes"],
+["ORD0171","28-09-2024","TV","Electronics","West","Pune","Maharashtra","Nehmat Kumer","Prepaid","52","6","5808","34848","Yes"],
+["ORD0218","28-09-2024","TV","Electronics","North","Jaipur","Rajasthan","Misha Sarkar","COD","52","2","22969","45938","Yes"],
+["ORD0229","28-09-2024","Camera","Electronics","North","Delhi","Delhi","Aaryahi Tandon","COD","19","9","17123","154107","Yes"],
+["ORD0402","28-09-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Tiya Maharaj","Prepaid","22","3","44659","133977","No"],
+["ORD0921","28-09-2024","Camera","Electronics","East","Kolkata","West Bengal","Ayesha Dalal","Prepaid","41","6","5356","32136","Yes"],
+["ORD0445","29-09-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Dhanush Atwal","Prepaid","24","10","8523","85230","Yes"],
+["ORD0730","29-09-2024","Camera","Electronics","West","Pune","Maharashtra","Zaina Atwal","COD","34","9","13555","121995","Yes"],
+["ORD0181","30-09-2024","Tablet","Electronics","North","Lucknow","Uttar Pradesh","Hiran Lalla","COD","49","10","25017","250170","Yes"],
+["ORD0231","30-09-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Chirag Dua","Prepaid","35","10","37442","374420","Yes"],
+["ORD0455","30-09-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Shray Bansal","Prepaid","45","4","22804","91216","Yes"],
+["ORD0739","30-09-2024","Headphones","Electronics","North","Delhi","Delhi","Shalv Dara","COD","27","9","37041","333369","No"],
+["ORD0470","02-10-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Hansh Hans","Prepaid","21","9","27698","249282","Yes"],
+["ORD0561","02-10-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Divij Gulati","COD","57","6","48790","292740","No"],
+["ORD0006","03-10-2024","Tablet","Electronics","East","Kolkata","West Bengal","Sana Saxena","Prepaid","64","7","34583","242081","No"],
+["ORD0052","03-10-2024","Camera","Electronics","West","Pune","Maharashtra","Ivana Khatri","COD","48","6","33115","198690","Yes"],
+["ORD0211","03-10-2024","Camera","Electronics","West","Pune","Maharashtra","Jiya Kapadia","Prepaid","50","9","48633","437697","Yes"],
+["ORD0285","03-10-2024","Mobile","Electronics","South","Chennai","Tamil Nadu","Kashvi Mand","COD","45","5","23094","115470","No"],
+["ORD0291","03-10-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Mehul Tiwari","COD","51","5","23963","119815","Yes"],
+["ORD0542","03-10-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Anvi Gola","COD","24","7","28052","196364","No"],
+["ORD0882","03-10-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Himmat Brar","COD","59","1","4245","4245","Yes"],
+["ORD0992","03-10-2024","Mobile","Electronics","North","Delhi","Delhi","Divij Dash","COD","29","5","23600","118000","Yes"],
+["ORD0583","04-10-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Samar Sabharwal","COD","30","7","1941","13587","No"],
+["ORD0031","05-10-2024","Laptop","Electronics","South","Hyderabad","Telangana","Jayesh Dewan","COD","57","8","43879","351032","Yes"],
+["ORD0369","05-10-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Farhan Ramachandran","COD","40","9","3175","28575","Yes"],
+["ORD0511","05-10-2024","Headphones","Electronics","South","Bangalore","Karnataka","Lagan Dora","Prepaid","59","10","6620","66200","No"],
+["ORD0912","05-10-2024","Headphones","Electronics","East","Kolkata","West Bengal","Kiaan Karpe","COD","50","6","25297","151782","Yes"],
+["ORD0230","06-10-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Nirvi Shenoy","Prepaid","56","9","45979","413811","Yes"],
+["ORD0548","06-10-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Tushar Reddy","Prepaid","18","4","31890","127560","No"],
+["ORD0954","06-10-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Baiju Ray","Prepaid","35","8","36697","293576","Yes"],
+["ORD0069","07-10-2024","Laptop","Electronics","North","Delhi","Delhi","Zeeshan Bera","Prepaid","27","6","40576","243456","Yes"],
+["ORD0128","07-10-2024","Mobile","Electronics","West","Mumbai","Maharashtra","Badal Hayre","COD","48","3","48158","144474","Yes"],
+["ORD0167","07-10-2024","Laptop","Electronics","East","Kolkata","West Bengal","Nehmat Karan","COD","25","1","5978","5978","Yes"],
+["ORD0209","07-10-2024","Camera","Electronics","North","Delhi","Delhi","Inaaya  Babu","Prepaid","18","3","3002","9006","Yes"],
+["ORD0372","07-10-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Abram Behl","COD","37","8","29735","237880","Yes"],
+["ORD0392","07-10-2024","Tablet","Electronics","East","Kolkata","West Bengal","Lagan Sehgal","Prepaid","19","10","36259","362590","Yes"],
+["ORD0580","07-10-2024","Mobile","Electronics","North","Jaipur","Rajasthan","Charvi Dave","COD","58","1","20183","20183","No"],
+["ORD0966","07-10-2024","Laptop","Electronics","West","Pune","Maharashtra","Devansh Dhar","COD","54","10","34849","348490","Yes"],
+["ORD0585","08-10-2024","Mobile","Electronics","West","Ahmedabad","Gujarat","Ira Choudhury","COD","31","4","17649","70596","No"],
+["ORD0911","08-10-2024","Headphones","Electronics","South","Bangalore","Karnataka","Anay Goswami","COD","54","4","14791","59164","Yes"],
+["ORD0969","08-10-2024","Mobile","Electronics","North","Jaipur","Rajasthan","Divyansh Shan","COD","59","9","7696","69264","Yes"],
+["ORD0331","09-10-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Prisha Kala","COD","22","6","38713","232278","Yes"],
+["ORD0623","09-10-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Ishita Kohli","Prepaid","30","8","44514","356112","No"],
+["ORD0123","10-10-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Prisha Sahni","COD","57","1","49204","49204","Yes"],
+["ORD0042","11-10-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Indranil Jani","COD","23","1","42405","42405","Yes"],
+["ORD0778","11-10-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Renee Sarma","Prepaid","62","4","34241","136964","Yes"],
+["ORD0782","11-10-2024","Camera","Electronics","East","Kolkata","West Bengal","Ryan Rajagopalan","Prepaid","49","1","30207","30207","Yes"],
+["ORD0019","12-10-2024","TV","Electronics","South","Chennai","Tamil Nadu","Tejas Sarraf","COD","29","10","28731","287310","Yes"],
+["ORD0026","12-10-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Aarna Mall","Prepaid","53","8","19168","153344","Yes"],
+["ORD0488","12-10-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Aarav Basu","Prepaid","25","8","7354","58832","Yes"],
+["ORD0859","12-10-2024","Headphones","Electronics","South","Hyderabad","Telangana","Kiaan Khanna","COD","18","4","33395","133580","Yes"],
+["ORD0457","13-10-2024","Tablet","Electronics","East","Kolkata","West Bengal","Raunak Iyengar","COD","65","2","38966","77932","Yes"],
+["ORD0022","16-10-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Miraan Wali","COD","51","3","9409","28227","Yes"],
+["ORD0468","16-10-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Nishith Jha","COD","39","4","47121","188484","Yes"],
+["ORD0512","16-10-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Yuvraj  Kalla","Prepaid","35","5","44608","223040","No"],
+["ORD0834","17-10-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Divyansh Ramanathan","Prepaid","31","7","39036","273252","Yes"],
+["ORD0450","18-10-2024","Smartwatch","Electronics","South","Chennai","Tamil Nadu","Inaaya  Gokhale","Prepaid","52","5","47025","235125","Yes"],
+["ORD0733","18-10-2024","Headphones","Electronics","West","Pune","Maharashtra","Hridaan Balasubramanian","Prepaid","40","6","2293","13758","No"],
+["ORD0191","19-10-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Yakshit Babu","COD","34","1","33310","33310","Yes"],
+["ORD0293","19-10-2024","Smartwatch","Electronics","West","Ahmedabad","Gujarat","Yakshit Seshadri","COD","19","9","38363","345267","Yes"],
+["ORD0533","19-10-2024","TV","Electronics","East","Kolkata","West Bengal","Dhanuk Jain","Prepaid","26","9","10480","94320","Yes"],
+["ORD0185","20-10-2024","TV","Electronics","South","Chennai","Tamil Nadu","Aradhya Rattan","Prepaid","20","1","8540","8540","No"],
+["ORD0226","20-10-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Samarth Tank","Prepaid","23","10","33838","338380","Yes"],
+["ORD0579","20-10-2024","Mobile","Electronics","South","Bangalore","Karnataka","Alisha Saran","Prepaid","44","6","19768","118608","No"],
+["ORD0429","21-10-2024","Smartwatch","Electronics","North","Delhi","Delhi","Armaan Gara","COD","18","6","34490","206940","Yes"],
+["ORD0696","21-10-2024","Camera","Electronics","North","Jaipur","Rajasthan","Hansh Bajwa","Prepaid","44","3","42151","126453","No"],
+["ORD0064","22-10-2024","TV","Electronics","South","Hyderabad","Telangana","Mehul Rama","Prepaid","35","5","47749","238745","Yes"],
+["ORD0420","22-10-2024","Camera","Electronics","South","Hyderabad","Telangana","Purab Kothari","COD","30","5","42970","214850","Yes"],
+["ORD0552","22-10-2024","Mobile","Electronics","North","Delhi","Delhi","Aaryahi Kumar","COD","23","7","20216","141512","Yes"],
+["ORD0527","23-10-2024","Tablet","Electronics","South","Hyderabad","Telangana","Riaan Trivedi","Prepaid","64","6","24599","147594","No"],
+["ORD0619","23-10-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Saksham Karpe","COD","49","8","27253","218024","No"],
+["ORD0856","23-10-2024","Mobile","Electronics","South","Hyderabad","Telangana","Rasha Chakrabarti","Prepaid","51","4","47661","190644","Yes"],
+["ORD0351","24-10-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Nayantara Gade","COD","23","2","32524","65048","Yes"],
+["ORD0520","24-10-2024","TV","Electronics","South","Chennai","Tamil Nadu","Pihu Lad","Prepaid","49","1","4580","4580","No"],
+["ORD0525","24-10-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Eshani Dhawan","Prepaid","45","9","16405","147645","Yes"],
+["ORD0106","25-10-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Indranil Rout","Prepaid","39","8","45330","362640","Yes"],
+["ORD0277","25-10-2024","Headphones","Electronics","South","Bangalore","Karnataka","Eshani Kala","Prepaid","31","1","23076","23076","No"],
+["ORD0974","25-10-2024","TV","Electronics","North","Delhi","Delhi","Lagan Chokshi","Prepaid","22","8","44039","352312","Yes"],
+["ORD0317","26-10-2024","TV","Electronics","West","Ahmedabad","Gujarat","Riaan Ganesh","COD","60","2","29587","59174","Yes"],
+["ORD0858","26-10-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Nehmat Babu","Prepaid","22","10","49744","497440","Yes"],
+["ORD0871","26-10-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Hridaan Tella","COD","61","5","45615","228075","Yes"],
+["ORD0872","26-10-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Vivaan Chandran","Prepaid","34","2","45613","91226","Yes"],
+["ORD0375","28-10-2024","TV","Electronics","North","Delhi","Delhi","Dhruv Bhatnagar","Prepaid","57","8","48482","387856","Yes"],
+["ORD0981","28-10-2024","TV","Electronics","West","Mumbai","Maharashtra","Dhanush Buch","Prepaid","49","5","25832","129160","Yes"],
+["ORD0068","29-10-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Dhruv Kashyap","COD","46","5","7952","39760","Yes"],
+["ORD0263","29-10-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Azad Varma","COD","65","6","2926","17556","Yes"],
+["ORD0419","29-10-2024","Camera","Electronics","South","Hyderabad","Telangana","Trisha Sachdeva","Prepaid","34","2","16824","33648","Yes"],
+["ORD0975","29-10-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Indrajit Bhavsar","Prepaid","35","6","34236","205416","Yes"],
+["ORD0011","30-10-2024","Mobile","Electronics","South","Bangalore","Karnataka","Sara Shankar","COD","49","2","9572","19144","Yes"],
+["ORD0650","30-10-2024","TV","Electronics","South","Chennai","Tamil Nadu","Pihu Lalla","Prepaid","18","2","9392","18784","Yes"],
+["ORD0443","31-10-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Samar Sabharwal","Prepaid","37","3","1125","3375","Yes"],
+["ORD0077","01-11-2024","TV","Electronics","West","Ahmedabad","Gujarat","Suhana Mangat","COD","34","2","24777","49554","Yes"],
+["ORD0096","01-11-2024","Tablet","Electronics","East","Kolkata","West Bengal","Jayan Virk","Prepaid","51","2","44093","88186","Yes"],
+["ORD0567","01-11-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Zaina Chauhan","Prepaid","23","1","19263","19263","Yes"],
+["ORD0688","01-11-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Mamooty Barad","COD","64","4","12845","51380","Yes"],
+["ORD0983","01-11-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Anahita Chandra","COD","45","3","16549","49647","Yes"],
+["ORD0122","02-11-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Nakul Sha","COD","24","6","22781","136686","Yes"],
+["ORD0400","02-11-2024","Tablet","Electronics","West","Pune","Maharashtra","Taran Sankar","Prepaid","29","10","34195","341950","Yes"],
+["ORD0413","02-11-2024","TV","Electronics","West","Pune","Maharashtra","Dishani Arya","COD","38","7","14539","101773","No"],
+["ORD0435","02-11-2024","TV","Electronics","South","Hyderabad","Telangana","Indrajit Sundaram","COD","25","5","20439","102195","No"],
+["ORD0831","02-11-2024","Camera","Electronics","East","Kolkata","West Bengal","Farhan Srinivas","COD","50","5","7920","39600","Yes"],
+["ORD0848","02-11-2024","Mobile","Electronics","South","Bangalore","Karnataka","Shayak Johal","COD","32","1","14357","14357","Yes"],
+["ORD0534","03-11-2024","Laptop","Electronics","South","Bangalore","Karnataka","Indrajit Bhatti","COD","44","2","30237","60474","Yes"],
+["ORD0023","04-11-2024","TV","Electronics","West","Ahmedabad","Gujarat","Aayush Ram","COD","20","5","6646","33230","Yes"],
+["ORD0114","04-11-2024","Tablet","Electronics","South","Hyderabad","Telangana","Zaina Cherian","Prepaid","30","1","37928","37928","Yes"],
+["ORD0287","04-11-2024","Laptop","Electronics","South","Bangalore","Karnataka","Tarini Kala","COD","65","5","48458","242290","Yes"],
+["ORD0407","04-11-2024","Mobile","Electronics","North","Jaipur","Rajasthan","Arhaan Iyengar","Prepaid","40","2","19228","38456","No"],
+["ORD0588","04-11-2024","Camera","Electronics","South","Bangalore","Karnataka","Shlok Butala","Prepaid","34","4","23112","92448","Yes"],
+["ORD0896","04-11-2024","TV","Electronics","South","Hyderabad","Telangana","Manjari Devi","COD","56","9","4297","38673","Yes"],
+["ORD0066","05-11-2024","Mobile","Electronics","South","Hyderabad","Telangana","Inaaya  Madan","Prepaid","34","10","20404","204040","Yes"],
+["ORD0095","05-11-2024","Headphones","Electronics","East","Kolkata","West Bengal","Yuvraj  Shetty","Prepaid","39","6","28800","172800","Yes"],
+["ORD0334","05-11-2024","Tablet","Electronics","North","Delhi","Delhi","Mamooty Sastry","COD","23","9","28910","260190","Yes"],
+["ORD0475","05-11-2024","Mobile","Electronics","South","Hyderabad","Telangana","Samar Sur","COD","22","7","12510","87570","Yes"],
+["ORD0607","05-11-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Nirvaan Rattan","COD","50","7","32431","227017","No"],
+["ORD0354","06-11-2024","Laptop","Electronics","South","Hyderabad","Telangana","Lagan Jhaveri","COD","64","10","5204","52040","No"],
+["ORD0050","07-11-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Azad Soman","COD","39","4","11419","45676","Yes"],
+["ORD0194","07-11-2024","Mobile","Electronics","South","Hyderabad","Telangana","Onkar Saha","Prepaid","33","2","45233","90466","Yes"],
+["ORD0416","07-11-2024","Mobile","Electronics","East","Kolkata","West Bengal","Siya Tiwari","Prepaid","49","5","2156","10780","No"],
+["ORD0857","07-11-2024","Camera","Electronics","East","Kolkata","West Bengal","Jivin Jain","Prepaid","42","9","29966","269694","Yes"],
+["ORD0523","09-11-2024","Tablet","Electronics","North","Delhi","Delhi","Ranbir Rege","COD","36","5","16507","82535","No"],
+["ORD0073","10-11-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Tejas Char","COD","58","7","5886","41202","Yes"],
+["ORD0241","10-11-2024","Mobile","Electronics","East","Kolkata","West Bengal","Ryan Chad","Prepaid","46","4","35093","140372","Yes"],
+["ORD0328","10-11-2024","TV","Electronics","South","Chennai","Tamil Nadu","Sara Lala","Prepaid","59","4","17793","71172","Yes"],
+["ORD0353","11-11-2024","Smartwatch","Electronics","North","Jaipur","Rajasthan","Aarav Raj","Prepaid","51","1","39325","39325","Yes"],
+["ORD0507","12-11-2024","Tablet","Electronics","North","Delhi","Delhi","Amira Badal","COD","41","9","1361","12249","No"],
+["ORD0518","12-11-2024","Camera","Electronics","East","Kolkata","West Bengal","Samar Borra","Prepaid","38","4","12551","50204","Yes"],
+["ORD0279","13-11-2024","TV","Electronics","North","Delhi","Delhi","Anya Shere","COD","44","7","46348","324436","No"],
+["ORD0314","13-11-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Tiya Barad","COD","39","8","41689","333512","Yes"],
+["ORD0318","13-11-2024","Smartwatch","Electronics","North","Delhi","Delhi","Anahita Maharaj","Prepaid","57","9","4108","36972","Yes"],
+["ORD0624","13-11-2024","Smartwatch","Electronics","South","Chennai","Tamil Nadu","Ira Sen","Prepaid","19","8","29713","237704","Yes"],
+["ORD0621","14-11-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Alia Sundaram","Prepaid","34","7","25934","181538","Yes"],
+["ORD0850","14-11-2024","Camera","Electronics","South","Bangalore","Karnataka","Bhavin Desai","COD","59","3","7637","22911","Yes"],
+["ORD0907","14-11-2024","Camera","Electronics","South","Bangalore","Karnataka","Tara Sood","COD","40","10","43324","433240","Yes"],
+["ORD0257","15-11-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Emir Deep","COD","60","9","39511","355599","Yes"],
+["ORD0946","15-11-2024","TV","Electronics","West","Ahmedabad","Gujarat","Eva Loyal","COD","27","2","38908","77816","Yes"],
+["ORD0097","16-11-2024","Mobile","Electronics","West","Pune","Maharashtra","Samiha Hegde","Prepaid","59","6","18350","110100","Yes"],
+["ORD0144","16-11-2024","Smartwatch","Electronics","West","Pune","Maharashtra","Gatik Madan","COD","29","9","42955","386595","Yes"],
+["ORD0453","16-11-2024","Smartwatch","Electronics","South","Hyderabad","Telangana","Neelofar Chhabra","Prepaid","22","6","41097","246582","Yes"],
+["ORD0543","16-11-2024","TV","Electronics","East","Kolkata","West Bengal","Zara Sibal","COD","36","3","27906","83718","No"],
+["ORD0660","16-11-2024","TV","Electronics","South","Bangalore","Karnataka","Riaan Dhar","COD","31","1","3572","3572","Yes"],
+["ORD0043","17-11-2024","TV","Electronics","South","Bangalore","Karnataka","Yuvraj  Borah","Prepaid","19","10","39206","392060","Yes"],
+["ORD0323","17-11-2024","TV","Electronics","South","Chennai","Tamil Nadu","Prerak Shah","COD","46","5","19588","97940","Yes"],
+["ORD0575","17-11-2024","Headphones","Electronics","West","Ahmedabad","Gujarat","Kimaya Varughese","COD","48","3","42625","127875","Yes"],
+["ORD0160","18-11-2024","Headphones","Electronics","East","Kolkata","West Bengal","Elakshi Sodhi","Prepaid","41","7","5881","41167","Yes"],
+["ORD0198","18-11-2024","TV","Electronics","West","Pune","Maharashtra","Zeeshan Bala","Prepaid","53","3","6888","20664","Yes"],
+["ORD0367","18-11-2024","TV","Electronics","North","Delhi","Delhi","Tushar Roy","COD","35","10","42965","429650","Yes"],
+["ORD0381","18-11-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Urvi Kapur","Prepaid","62","7","37571","262997","Yes"],
+["ORD0654","18-11-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Ayesha Dass","Prepaid","38","3","31295","93885","No"],
+["ORD0108","19-11-2024","Camera","Electronics","West","Pune","Maharashtra","Indrajit Kohli","Prepaid","56","6","45292","271752","Yes"],
+["ORD0225","19-11-2024","Headphones","Electronics","West","Pune","Maharashtra","Jivin Date","Prepaid","44","7","25448","178136","Yes"],
+["ORD0721","19-11-2024","Camera","Electronics","North","Delhi","Delhi","Gatik Zachariah","COD","21","9","31723","285507","Yes"],
+["ORD0618","20-11-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Diya Kar","Prepaid","24","5","35064","175320","No"],
+["ORD0361","21-11-2024","Camera","Electronics","South","Bangalore","Karnataka","Suhana Shere","COD","27","1","2629","2629","Yes"],
+["ORD0587","21-11-2024","Headphones","Electronics","South","Hyderabad","Telangana","Sara Ramesh","COD","28","6","48336","290016","No"],
+["ORD0636","21-11-2024","Smartwatch","Electronics","East","Kolkata","West Bengal","Sahil Saraf","Prepaid","20","9","8971","80739","No"],
+["ORD0774","21-11-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Jayan Singh","Prepaid","33","6","31870","191220","Yes"],
+["ORD0984","21-11-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Jhanvi Thaker","Prepaid","19","9","11123","100107","Yes"],
+["ORD0669","23-11-2024","Headphones","Electronics","South","Bangalore","Karnataka","Vihaan Kaul","Prepaid","55","3","22543","67629","Yes"],
+["ORD0442","24-11-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Hridaan Thakur","Prepaid","46","10","15971","159710","Yes"],
+["ORD0501","24-11-2024","Mobile","Electronics","West","Pune","Maharashtra","Veer Dutta","Prepaid","40","2","44691","89382","No"],
+["ORD0638","24-11-2024","TV","Electronics","East","Kolkata","West Bengal","Darshit Cherian","Prepaid","37","9","22796","205164","No"],
+["ORD0801","24-11-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Khushi Wadhwa","COD","29","9","31818","286362","Yes"],
+["ORD0843","24-11-2024","Headphones","Electronics","West","Pune","Maharashtra","Ryan Sha","COD","52","3","43903","131709","Yes"],
+["ORD0922","24-11-2024","Tablet","Electronics","South","Bangalore","Karnataka","Kaira Thakur","Prepaid","45","8","12076","96608","Yes"],
+["ORD0009","25-11-2024","Camera","Electronics","South","Chennai","Tamil Nadu","Eshani Boase","Prepaid","54","6","36220","217320","Yes"],
+["ORD0712","25-11-2024","Laptop","Electronics","South","Hyderabad","Telangana","Pranay Saraf","Prepaid","27","8","24613","196904","Yes"],
+["ORD0493","27-11-2024","Camera","Electronics","West","Mumbai","Maharashtra","Siya Sarna","Prepaid","25","8","49234","393872","Yes"],
+["ORD0566","27-11-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Yashvi Magar","Prepaid","50","8","18927","151416","Yes"],
+["ORD0088","28-11-2024","Camera","Electronics","West","Mumbai","Maharashtra","Ehsaan Dhawan","Prepaid","53","1","29233","29233","Yes"],
+["ORD0213","28-11-2024","Tablet","Electronics","South","Bangalore","Karnataka","Ehsaan Bail","Prepaid","25","2","32482","64964","No"],
+["ORD0325","28-11-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Anahi Dhar","COD","54","10","38031","380310","Yes"],
+["ORD0480","28-11-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Raunak Tara","COD","32","4","31205","124820","Yes"],
+["ORD0805","28-11-2024","TV","Electronics","North","Jaipur","Rajasthan","Eshani Suri","Prepaid","51","9","8660","77940","Yes"],
+["ORD0149","29-11-2024","Camera","Electronics","North","Delhi","Delhi","Bhavin Badal","Prepaid","48","10","29346","293460","Yes"],
+["ORD0214","29-11-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Lagan Rattan","Prepaid","63","6","38534","231204","Yes"],
+["ORD0383","29-11-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Badal Tripathi","COD","31","6","37005","222030","Yes"],
+["ORD0632","29-11-2024","Mobile","Electronics","North","Jaipur","Rajasthan","Yakshit Varkey","Prepaid","52","5","33970","169850","Yes"],
+["ORD0865","29-11-2024","Camera","Electronics","North","Jaipur","Rajasthan","Faiyaz Sachdeva","COD","44","5","23458","117290","Yes"],
+["ORD0889","29-11-2024","Mobile","Electronics","North","Jaipur","Rajasthan","Kanav Ram","Prepaid","55","4","48439","193756","Yes"],
+["ORD0451","30-11-2024","Tablet","Electronics","South","Hyderabad","Telangana","Yuvaan Chand","Prepaid","62","5","48230","241150","Yes"],
+["ORD0916","30-11-2024","Headphones","Electronics","West","Mumbai","Maharashtra","Ritvik Shukla","COD","39","6","40523","243138","Yes"],
+["ORD0281","01-12-2024","Laptop","Electronics","North","Lucknow","Uttar Pradesh","Anahita Luthra","COD","61","5","25905","129525","Yes"],
+["ORD0397","01-12-2024","Camera","Electronics","North","Delhi","Delhi","Drishya Mandal","COD","35","4","49511","198044","Yes"],
+["ORD0469","01-12-2024","TV","Electronics","South","Bangalore","Karnataka","Taran Sur","Prepaid","60","9","1556","14004","Yes"],
+["ORD0722","01-12-2024","Camera","Electronics","East","Kolkata","West Bengal","Madhup Bath","COD","21","1","14235","14235","No"],
+["ORD0736","01-12-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Samaira Ghosh","COD","60","6","23795","142770","Yes"],
+["ORD0189","02-12-2024","Headphones","Electronics","South","Hyderabad","Telangana","Adah Kari","COD","50","3","14834","44502","Yes"],
+["ORD0541","02-12-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Divyansh Sen","COD","18","7","27116","189812","Yes"],
+["ORD0978","02-12-2024","Laptop","Electronics","South","Hyderabad","Telangana","Tejas Ahluwalia","COD","42","3","10072","30216","Yes"],
+["ORD0282","03-12-2024","Tablet","Electronics","West","Pune","Maharashtra","Ehsaan Chowdhury","Prepaid","44","7","47562","332934","No"],
+["ORD0124","04-12-2024","Laptop","Electronics","East","Kolkata","West Bengal","Uthkarsh Golla","Prepaid","65","1","16194","16194","Yes"],
+["ORD0301","04-12-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Nitara Mahal","Prepaid","40","6","15307","91842","Yes"],
+["ORD0373","04-12-2024","Laptop","Electronics","North","Delhi","Delhi","Charvi Virk","COD","30","4","12673","50692","Yes"],
+["ORD0479","04-12-2024","TV","Electronics","West","Mumbai","Maharashtra","Devansh Mahajan","Prepaid","51","4","1562","6248","Yes"],
+["ORD0797","04-12-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Divit Sami","Prepaid","56","2","34716","69432","Yes"],
+["ORD0884","06-12-2024","Mobile","Electronics","South","Bangalore","Karnataka","Sana Zachariah","COD","33","7","19068","133476","Yes"],
+["ORD0131","07-12-2024","TV","Electronics","North","Lucknow","Uttar Pradesh","Keya Chokshi","Prepaid","43","2","49697","99394","Yes"],
+["ORD0633","07-12-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Baiju Bhatia","Prepaid","23","7","28694","200858","No"],
+["ORD0243","08-12-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Mohanlal Garde","COD","47","5","16317","81585","Yes"],
+["ORD0378","08-12-2024","Mobile","Electronics","West","Pune","Maharashtra","Gatik Sarin","COD","52","4","16045","64180","Yes"],
+["ORD0549","08-12-2024","Tablet","Electronics","West","Mumbai","Maharashtra","Miraan Bhalla","Prepaid","32","7","39254","274778","No"],
+["ORD0744","08-12-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Hridaan Rajagopal","COD","56","6","14761","88566","No"],
+["ORD0986","08-12-2024","Headphones","Electronics","West","Pune","Maharashtra","Kavya Koshy","COD","43","8","25962","207696","Yes"],
+["ORD0227","09-12-2024","TV","Electronics","South","Chennai","Tamil Nadu","Tara Mandal","Prepaid","46","10","9516","95160","Yes"],
+["ORD0256","09-12-2024","Laptop","Electronics","South","Hyderabad","Telangana","Pari Lad","Prepaid","59","1","18993","18993","Yes"],
+["ORD0292","09-12-2024","Mobile","Electronics","South","Chennai","Tamil Nadu","Aarush Chacko","Prepaid","62","3","12835","38505","Yes"],
+["ORD0437","09-12-2024","Camera","Electronics","West","Mumbai","Maharashtra","Mahika Bumb","Prepaid","25","1","39555","39555","No"],
+["ORD0586","09-12-2024","Camera","Electronics","North","Jaipur","Rajasthan","Shayak Cherian","COD","39","7","8538","59766","Yes"],
+["ORD0640","09-12-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Yuvaan Kamdar","COD","64","8","40512","324096","No"],
+["ORD0796","09-12-2024","Tablet","Electronics","South","Hyderabad","Telangana","Mohanlal Khalsa","Prepaid","63","5","1962","9810","Yes"],
+["ORD0060","10-12-2024","Mobile","Electronics","South","Chennai","Tamil Nadu","Kavya Zacharia","Prepaid","54","4","39977","159908","Yes"],
+["ORD0555","10-12-2024","Mobile","Electronics","West","Pune","Maharashtra","Renee Sarraf","COD","65","4","16476","65904","No"],
+["ORD0731","10-12-2024","Headphones","Electronics","North","Jaipur","Rajasthan","Ira Kaul","COD","40","8","34255","274040","No"],
+["ORD0232","11-12-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Fateh Halder","Prepaid","43","9","6573","59157","Yes"],
+["ORD0266","11-12-2024","Tablet","Electronics","South","Hyderabad","Telangana","Rohan Kar","COD","31","2","34226","68452","Yes"],
+["ORD0635","11-12-2024","Mobile","Electronics","East","Kolkata","West Bengal","Diya Brahmbhatt","COD","56","4","28998","115992","No"],
+["ORD0735","11-12-2024","Camera","Electronics","North","Delhi","Delhi","Azad Suri","Prepaid","61","7","13554","94878","No"],
+["ORD0040","12-12-2024","Headphones","Electronics","West","Pune","Maharashtra","Reyansh Dani","Prepaid","49","7","2253","15771","Yes"],
+["ORD0659","12-12-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Myra Raval","COD","58","6","49704","298224","Yes"],
+["ORD0780","12-12-2024","Mobile","Electronics","North","Lucknow","Uttar Pradesh","Krish Sodhi","COD","38","4","45834","183336","Yes"],
+["ORD0576","13-12-2024","Headphones","Electronics","South","Chennai","Tamil Nadu","Navya Shroff","Prepaid","56","4","47467","189868","No"],
+["ORD0770","13-12-2024","Camera","Electronics","West","Ahmedabad","Gujarat","Himmat Bains","Prepaid","49","3","16451","49353","Yes"],
+["ORD0059","14-12-2024","Camera","Electronics","North","Jaipur","Rajasthan","Saira Aggarwal","Prepaid","34","7","44899","314293","Yes"],
+["ORD0320","14-12-2024","Headphones","Electronics","South","Bangalore","Karnataka","Miraan Walla","Prepaid","56","8","13333","106664","Yes"],
+["ORD0343","14-12-2024","Camera","Electronics","West","Mumbai","Maharashtra","Vivaan Gupta","Prepaid","29","4","8565","34260","Yes"],
+["ORD0490","14-12-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Shray Shankar","Prepaid","35","7","3608","25256","Yes"],
+["ORD0594","14-12-2024","Tablet","Electronics","South","Hyderabad","Telangana","Manjari Halder","COD","28","10","20216","202160","No"],
+["ORD0734","15-12-2024","TV","Electronics","South","Chennai","Tamil Nadu","Vritika Bala","Prepaid","39","9","11060","99540","No"],
+["ORD0057","16-12-2024","Tablet","Electronics","North","Delhi","Delhi","Trisha Jayaraman","Prepaid","58","8","9890","79120","Yes"],
+["ORD0224","16-12-2024","Camera","Electronics","West","Pune","Maharashtra","Priyansh Babu","Prepaid","18","9","42948","386532","Yes"],
+["ORD0799","16-12-2024","Camera","Electronics","North","Lucknow","Uttar Pradesh","Mohanlal Rao","COD","36","3","49309","147927","Yes"],
+["ORD0204","17-12-2024","Mobile","Electronics","South","Bangalore","Karnataka","Rasha Keer","COD","18","2","49729","99458","Yes"],
+["ORD0649","17-12-2024","Tablet","Electronics","South","Bangalore","Karnataka","Hrishita Lata","Prepaid","38","4","12788","51152","Yes"],
+["ORD0382","18-12-2024","Tablet","Electronics","West","Ahmedabad","Gujarat","Lakshit Bahri","COD","58","8","23738","189904","Yes"],
+["ORD0482","18-12-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Yashvi Sehgal","Prepaid","54","7","39516","276612","Yes"],
+["ORD0570","18-12-2024","Tablet","Electronics","West","Pune","Maharashtra","Jivin Sahni","Prepaid","20","6","49009","294054","Yes"],
+["ORD0248","19-12-2024","Mobile","Electronics","West","Mumbai","Maharashtra","Zoya Bobal","COD","57","2","24819","49638","Yes"],
+["ORD0368","19-12-2024","Laptop","Electronics","South","Bangalore","Karnataka","Mamooty Kumer","Prepaid","45","2","10676","21352","Yes"],
+["ORD0569","19-12-2024","Mobile","Electronics","North","Jaipur","Rajasthan","Manjari Suresh","COD","55","5","47008","235040","Yes"],
+["ORD0695","19-12-2024","Headphones","Electronics","East","Kolkata","West Bengal","Kartik Kurian","Prepaid","20","8","27217","217736","No"],
+["ORD0158","20-12-2024","Mobile","Electronics","South","Chennai","Tamil Nadu","Zara Sankar","COD","50","7","2045","14315","Yes"],
+["ORD0764","20-12-2024","Camera","Electronics","South","Bangalore","Karnataka","Arhaan Bera","COD","61","1","7836","7836","Yes"],
+["ORD0948","20-12-2024","Tablet","Electronics","South","Bangalore","Karnataka","Lakshit Walia","COD","40","3","21877","65631","Yes"],
+["ORD0004","21-12-2024","Smartwatch","Electronics","South","Bangalore","Karnataka","Vivaan Krishnamurthy","Prepaid","53","1","21262","21262","Yes"],
+["ORD0152","21-12-2024","Laptop","Electronics","West","Pune","Maharashtra","Anahita Jha","COD","46","2","13903","27806","Yes"],
+["ORD0747","21-12-2024","Laptop","Electronics","South","Chennai","Tamil Nadu","Nirvaan Sangha","Prepaid","32","2","7371","14742","No"],
+["ORD0841","21-12-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Samaira Chatterjee","COD","37","5","12953","64765","Yes"],
+["ORD0041","22-12-2024","Laptop","Electronics","West","Mumbai","Maharashtra","Jivin Trivedi","Prepaid","56","9","42242","380178","Yes"],
+["ORD0296","22-12-2024","Smartwatch","Electronics","West","Mumbai","Maharashtra","Kiaan Baria","Prepaid","42","10","22976","229760","Yes"],
+["ORD0391","22-12-2024","Smartwatch","Electronics","North","Delhi","Delhi","Siya Sethi","Prepaid","29","9","28814","259326","Yes"],
+["ORD0294","25-12-2024","Tablet","Electronics","South","Chennai","Tamil Nadu","Anika Sachdeva","Prepaid","28","8","28828","230624","Yes"],
+["ORD0471","25-12-2024","Tablet","Electronics","North","Jaipur","Rajasthan","Ira Vig","Prepaid","22","1","12032","12032","Yes"],
+["ORD0785","25-12-2024","Laptop","Electronics","West","Ahmedabad","Gujarat","Mohanlal Balan","Prepaid","46","8","22707","181656","Yes"],
+["ORD0483","26-12-2024","Camera","Electronics","North","Jaipur","Rajasthan","Shaan Loke","COD","59","10","17723","177230","Yes"],
+["ORD0529","26-12-2024","Tablet","Electronics","East","Kolkata","West Bengal","Aayush Hari","COD","47","4","18311","73244","Yes"],
+["ORD0617","26-12-2024","TV","Electronics","South","Bangalore","Karnataka","Saira Jain","COD","52","9","40306","362754","Yes"],
+["ORD0994","26-12-2024","Smartwatch","Electronics","North","Delhi","Delhi","Raunak Majumdar","COD","48","8","22780","182240","Yes"],
+["ORD0275","27-12-2024","Laptop","Electronics","East","Kolkata","West Bengal","Ryan Verma","COD","34","8","39129","313032","No"],
+["ORD0864","27-12-2024","Headphones","Electronics","South","Hyderabad","Telangana","Yasmin Khurana","Prepaid","41","1","28178","28178","Yes"],
+["ORD0046","28-12-2024","Headphones","Electronics","North","Lucknow","Uttar Pradesh","Indrans Bhavsar","Prepaid","40","10","9125","91250","Yes"],
+["ORD0120","28-12-2024","Tablet","Electronics","East","Kolkata","West Bengal","Dishani Sen","Prepaid","27","8","40359","322872","Yes"],
+["ORD0278","28-12-2024","TV","Electronics","North","Delhi","Delhi","Nakul Chatterjee","Prepaid","55","9","8170","73530","No"],
+["ORD0010","30-12-2024","Smartwatch","Electronics","North","Lucknow","Uttar Pradesh","Riya Bedi","Prepaid","30","9","36975","332775","Yes"],
+["ORD0150","30-12-2024","TV","Electronics","South","Chennai","Tamil Nadu","Indrajit Verma","Prepaid","53","3","8859","26577","Yes"],
+["ORD0157","30-12-2024","Headphones","Electronics","North","Delhi","Delhi","Yasmin Johal","COD","21","6","6532","39192","Yes"],
+["ORD0360","30-12-2024","TV","Electronics","South","Bangalore","Karnataka","Ishita Banik","COD","28","3","35726","107178","Yes"],
+["ORD0611","30-12-2024","TV","Electronics","East","Kolkata","West Bengal","Vivaan Baral","COD","41","5","46553","232765","No"],
+["ORD0072","31-12-2024","Laptop","Electronics","North","Jaipur","Rajasthan","Himmat Sheth","Prepaid","27","10","2041","20410","Yes"]
+  ];
+  </script>
+  <script>
+  /* (c) 2026 XLBooster Pro - Proprietary Engine. Unauthorized copying is strictly prohibited. */
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => { if(e.keyCode===123 || (e.ctrlKey&&e.shiftKey&&(e.keyCode===73||e.keyCode===74||e.keyCode===67)) || (e.ctrlKey&&e.keyCode===85)) e.preventDefault(); });
+  (function(){
+    var data = ["==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","gACIgACIgACIgoQD7BCa0BCZhVGa0BSZsJWYUFGdhRmLlxmYhRHIgACIgACI","gAiCN0HIgACIgACIgAiCNsDduFGdy9GctlWIg0WZy4SMgoTZ6l2ctQnbvZGI","7QnbhRncvBXbpFCI4BHMxAiO0h2ZpJHI7QnbhRncvBXbpFCI4BnMxAiOw9Gd","gACIgACIgACIgACIgoQD7BiclRnZhpzYzVGZfdmbpRncvNnLoRHI+Aic0BiP","gQWYlhGdgUGbiFGVhRXYk5SZsJWY0BCIgACIgACIgoQDsUmcvZWZipzYzVGZ","fdmbpRncvNnLoRHI+Aic0BiPgQWYlhGdgUGbiFGVhRXYk5SZsJWY0BCIgACI","gACIgoQDsIXZ0ZWY6M2ch91ZulGdy92cugGdg4DIyRHI+ACZhVGa0BSZsJWY","UFGdhRmLlxmYhRHIgACIgACIgAiCNwSZy9mZlJmOjNXYfdmbpRncvNnLoRHI","+Aic0BiPgQWYlhGdgUGbiFGVhRXYk5SZsJWY0BCIgACIgACIgoQDsIXZ0ZWY","6cmbpRncvNnLoRHI+Aic0BiPgQWYlhGdgUGbiFGVhRXYk5SZsJWY0BCIgACI","gACIgoQDsUmcvZWZipzZulGdy92cugGdg4DIyRHI+ACZhVGa0BSZsJWYUFGd","hRmLlxmYhRHIgACIgACIgAiCN0HI7QnbhRncvBXbpFCIpIjLwACL4MjMgwyN","5ACL3YDKhJ2ZyBiOy9GbvNWLk5WdvJ3ZrNWYiByegQWZ0NWZsV2cuIHdgkHZ","vJGdgUGbiFGVhRXYk5SZsJWY0BCIgACIgACIgoQDghCd4VGdukyJ+UGb5R3c","8cCKkACIgACIgoQD7kSfgACIgACIK0QfgACIgACIgACIK0wOpgydhJHZuUGb","iFGdgACIgACIgACIgACIgoQD9tHIpUGKoNGdhNGI9ByOpgCZslWdiVmcuIXZ","kxWa1JEajJXYlNnLlxmYhRHI7BSeyRHIgACIgACIgACIgACIK0wOpcyajlGb","jdCKyV2Znlmc05SKnwGbBJXYlx2YtI2c0RmLgwSZ0VGblRWLiNHdk5yJoQCI","gACIgACIgACIgACIK0wOpcyJowWY25SKn0lIlRXYkJSPlBXe0tFd1BnbpdCK","kACIgACIgACIgACIgAiCNsTK9BCIgACIgACIgACIgAiCNsTKncCKsFmdukyJ","0NWZsV2cgwSXiQHelRnI9UGc5R3W0VHcul2JoQmbpZmLpkCKyVGZhVGauMXa","oRHKkACIgACIgACIgACIgACIgACIK0wOpcyJog2YyFWZz5ycphGdgACIgACI","gACIgACIgACIgAiCNsHIpgibvlGdj5WdmhSeyVmdl5SKoMnbtVHbvNmLlxmY","hRHIgACIgACIgACIgACIK0wOpcSZn5WYoN2JoIXZndWayRnLpcCbsF2JowWY","25SKnQ3YlxWZTh2YyFWZT5Wb1x2bjNyJoQCIgACIgACIgACIgACIK0wOpcyJ","owWY25SKng2YyFWZTxWYi9GbH12b0NXdjNyJoQCIgACIgACIgACIgACIK0wO","pcyJog2YyFWZz5SZsJWY0BCIgACIgACIgACIgAiCNsHIpcCbsF2Jg0TP9ASZ","wlHdoAiZpBSZzxWZg0HIgACIgACIgAiCNsTKocXYyRmLlxmYhRHIgACIgACI","gACIgACIK0Qf7BSKlhCajRXYjBSfgsTKoQGbpVnYlJnLyVGZslWdCh2YyFWZ","z5SZsJWY0Byegknc0BCIgACIgACIgACIgAiCNsTKns2Ypx2Yngicld2ZpJHd","ukyJsxWQyFWZsNWLiNHdk5CIsUGdlxWZk1iYzRHZucCKkACIgACIgACIgACI","gAiCNsHIpciclRGbpVnYoNmchV2cnASP90DIlBXe0hCImlGIlNHblBSfgACI","gACIgACIK0wOpgydhJHZuUGbiFGdgACIgACIgACIgACIgoQD7kyJngCbhZnL","zRXdw5WSkRCIgACIgACIgACIgACIK0wOpcSXiUGdhRmI9UGc5R3W0VHcul2J","oQmbpZmLpkCKyVGZhVGaukCeklGKu1Wds92YuUGbiFGdoQCI9Ayc0VHculEZ","kAichZHIgACIgACIgACIgACIK0wegkyJlRXYkdCI90TPgUGc5RHKgYWagU2c","sVGI9BCIgACIgACIgoQD9ByOpcyJowWY25SKng2YyFWZTxWYi9GbH12b0NXd","jNyJoQCI7BSK4RWag0TPgkCKsFmdukyJ0NWZsV2UoNmchV2Uu1Wds92YjcCK","kgiZpBCIgACIgACIgACIgAiCNsTKncCKsFmdukyJ0NWZsV2cgwSXiQHelRnI","9UGc5R3W0VHcul2JoQmbpZmLpkCKyVGZhVGaukCeklGKu1Wds92YuUGbiFGd","oQCIgACIgACIgACIgACIK0wOpgydhJHZukyJngCajJXYlNnLpgHZphibtVHb","vNmLlxmYhRHIgACIgACIgACIgACIK0wegkyJu1Wds92YnASP90DIlBXe0hCI","mlGIlNHblBSfgACIgACIgACIK0wOpcyJowWY25SKng2YyFWZTxWYi9GbH12b","0NXdjNyJoQCIgACIgACIgACIgACIK0wOpgydhJHZukyJngCajJXYlNnLlxmY","hRHIgACIgACIgACIgACIK0wegkyJsFmYvx2ZnASP90DIlBXe0hCImlGIgACI","gACIgAiCNACIgACIgACIgoQD7kyJ4RWangSY0FGZukycphGdoQCI9ACeklGI","yFmdgACIgACIgACIK0wOpcSZwlHdngSY0FGZukycphGdoQCI9ASZwlHdgIXY","2BCIgACIgACIgoQD7BSKo42bpR3YuVnZgwyJyVGdslmZtUmdv1WZy5yJgwyJ","rNWasN2Jo42bukyJyVmbpFGdu92QzJXZ0xWaGVmdpR3YhNyJoQCIgACIgAiC","NACIgACIgoQD7kSSVNnclRHbpZUZ0FGZwVHIscCdk5ydhJHZngibv5SZsJWY","0BCIgACIgoQDgACIgACIK0wO9BCIgACIgoQD9BCIgACIgACIgoQD7kCKlRWa","o5icl5WahRnbvNGJgACIgACIgACIgACIgoQD7BSZzxWZg0HIgACIgACIgAiC","NsTKngXZsZ2JgwyJ5FGbwNXakdCKzN3YuIXZulWY052bjRCIgACIgACIgACI","gACIK0wOpciPu9Gd0VnYvwDbsFEIyFWZsNEI+k2L84jIzg2chJHdtkmYgkmY","i0zczFGbjBSa84jI7gHcyoDa0RWa31iclRmcvJGI7ADM2oDdodWaldXL052b","mByO4BnMxoTZ6l2ctQnbvZmI9UGb5R3cgICbsFmI9UGc5RXLhRXYkBiIyVGd","slmZtUmdv1WZyByb0VXYtMXbgMTL4BHIw0SewBCbslGctQWZk5WdvJHIyV2Z","uFGZtUmbpxGd19WLuRnYg02ct4GdiBib0JmI9M3chx2Yg42b0RXdixzJoQmb","lBHch5icl5WahRnbvNGJgACIgACIgACIgACIgoQD7BSKwAiPgQnb192QzJXZ","0xWamhCImlGIgACIgACIgAiCNACIgACIgACIgoQD9BCIgACIgACIgoQD7kyJ","+4WYwN3L84TavwjPiIXZ05WavBnOy92cyV3Yi0TZslHdzBiIyVGZslWdih2Y","yFWZzJSPlBXe01SY0FGZgIiclRHbpZWLlZ3btVmcgETLz1GIsxWam1SZsNmc","pNWL41SaiBSaiJSPzNXYsNGIpxDIyVGZslWdCBCajJXYlNFIkV2YuFmdkFkP","iAXaoNWLyVGdslmZgM3clN2Y1NXLnJGIldGZhJmI9M3chx2Yg4WYwNHPngCZ","uVGcwFmLyVmbpFGdu92YkACIgACIgACIgACIgAiCNszKrQnb192QzJXZ0xWa","mBCIgACIgACIgACIgAiCNsHIpUmdpR3YBJ2coAiZpBCIgACIgACIgoQDgACI","gACIgACIK0wOlVnc0BSPgUmdpR3YBJ2cgkCMg4DIoR3ZuVGbukyJhlmclRXa","yNWLiNHdk5yJoQCImYCIlZXa0NWQiNXIoAiZpBCIgACIgACIgoQD9tHIpUGK","oNGdhNGI9BCIgACIgACIgoQD7UWdyRHI9ASZ2lGdjFkYzBSKwAiPggGdn5WZ","s5SYpJXZ0lmcj5SZ0FGdTJ2cgYiJgEWayVGdpJ3YuUGdhR3UiNHImYCIlRXY","0NlYzhCImlGIgACIgACIgACIgACIK0wOpgycslWY0VGR0V2ZuIXZkxWa1JEa","jJXYlNnLlxmYhRHI9ASZ0FGdTJ2cgIXY2BCIgACIgACIgACIgAiCNsHI5JHd","gACIgACIgACIK0wOlNHbhZGI9ASZ2lGdjFkYzBichZHIgACIgACIgAiCNkib","vlGdjVGdlREI0NXdi9mUoAiclRGbpVnQoNmchV2Ugs2YhJHVg8yLgACIgACI","gACIK0AIgACIgACIgAiCNsTK9BCIgACIgACIgoQD9BCIgACIgACIgACIgAiC","N0HIgACIgACIgACIgACIgACIgoQD7kyJ+4WYwN3L84TavwjPiIXZ05WavBnO","y92cyV3Yi0TZslHdzBiInAyKggHZpByKgciI9gHZp1SY0FGZgISZ0FGZi0TZ","wlHdtEGdhRGIiIXZ0xWam1SZ29WblJHIx0yctBCbslmZtUGbjJXaj1CetkmY","gkmYi0zczFGbjBSa8AyJgsCI0hHdgsCInAiOnAyKgUWbh5EbvNGIrAyJ+ICc","ph2YtIXZ0xWamByayFGZtQHelRHIn5WauJXY31yZiBSZnRWYiJSPzNXYsNGI","uFGczxzJoQmblBHch5icl5WahRnbvNGJgACIgACIgACIgACIgACIgACIgACI","K0wOpcSeuF0JgoDIvRHI/Ayb0hCIrAyJg8GdgcCIrASKnknbBdCI6ASbvJnZ","g8DIt9mcmhCI9ACd4RHIyFmdgACIgACIgACIgACIgACIgACIgACIK0wOrsCd","uV3bDNnclRHbpZGIgACIgACIgACIgACIgACIgACIgAiCNsHIp8GdgwHfg02b","yZGKgYWagACIgACIgACIgACIgACIgAiCNsTKowWY25SKxgScl5yclRXYkRCI","9Ayb0BCLpgCbhZnLpADKxVmLzVGdhRGJg0DIt9mcmBichZHIgACIgACIgACI","gACIgACIgoQD7BSKyASP9ACa0dmblxmLzVGdhRGJoAiZpBCIgACIgACIgACI","gAiCNsTKn0lIlRXYkJSPlBXe0tFd1BnbpdCKk5Wam5SKpgiclRWYlhmLzlGa","0hCJg0DIzVGdhRGJgIXY2BCIgACIgACIgACIgAiCNACIgACIgACIgACIgAiC","N0HIgACIgACIgACIgACIK0wOpciPuFGcz9CP+k2L84jIyVGdul2bwpjcvNnc","1NmI9UGb5R3cgIyJgsCI4RWagsCInISP4RWatEGdhRGIi4Wb1x2bjJSPlBXe","01SY0FGZgIiclRHbpZWLlZ3btVmcgETLz1GIsxWam1SZsNmcpNWL41SaiBSa","iJSPzNXYsNGIpxDInAyKgg2YyFWZTlXYsB3cpRGIrAyJgozJgsCIl1WYOx2b","jByKgciPiAXaoNWLyVGdslmZgsmchRWL0hXZ0Bybm5WatcmYgU2ZkFmYi0zc","zFGbjBibhB3c8cCKk5WZwBXYuIXZulWY052bjRCIgACIgACIgACIgACIgACI","goQD7cSKr5WYsJEKnASPgg2YyFWZTlXYsB3cpRGIpcSLnASP90DIoNmchV2U","5FGbwNXakhiZpBCIgACIgACIgACIgACIgACIK0wOpcyJgwyZvwFXcx1LoU2Y","hxGclJnLoNmchV2U5FGbwNXakBSPgg2YyFWZTlXYsB3cpRGIgACIgACIgACI","gACIgACIgoQD7kSMtACLwgSZjlGbz5CajJXYlNVehxGczlGZg0DIoNmchV2U","5FGbwNXakBSKnQyJg0TP9ASKx0CKlNWasNnLoNmchV2U5FGbwNXakhiZpBCI","gACIgACIgACIgACIgACIK0wOpEDKlNWasNnLoNmchV2U5FGbwNXakBSPgg2Y","yFWZTlXYsB3cpRGIpciXnASP90DIpADK0Fkchh2Yug2YyFWZTlXYsB3cpRGK","mlGIgACIgACIgACIgACIgACIgoQD7g2YyFWZTx2bjBSPgg2YyFWZTlXYsB3c","pRGIyFmdgACIgACIgACIgACIgACIgAiCNszKrQnb192QzJXZ0xWamBCIgACI","gACIgACIgACIgACIK0wegkCajJXYlNFbvNGKgYWagACIgACIgACIgACIgoQD","7kCKtlmc05SKoQHelRnLp0HI7MDI90DIlBXeUVGZv5mLzlGa0BibyVHdlJHI","7lCKu9Wa0Nmb1ZGKyVGdslmZukCKzRnblRnbvNmLpkCKyVGZhVGauMXaoRHK","kASPgUWbh5EbvNGIyFmdgACIgACIgACIgACIgoQD7kCKoNmchV2cuMXaoRHI","9ACajJXYlNFbvNGIyFmdgACIgACIgACIgACIgoQD7BSK4RWao42bpR3YuVnZ","oknclZXZukCKz5Wb1x2bj5SZsJWY0BCIgACIgACIgoQDzVGdhREImAycu1Wd","s92Qgs2YhJHVg8yLgACIgACIgACIK0AIgACIgACIgAiCN0HIgACIgACIgAiC","NsTKn4jbhB3cvwjPp9CP+IiclRnbp9Gc6I3bzJXdjJSPlxWe0NHIiwWYi9Gb","nJSPlBXe01SY0FGZgIiclRHbpZWLlZ3btVmcgETLz1GIsxWam1SZsNmcpNWL","41SaiBSaiJSPzNXYsNGIpxDInAyKgg2YyFWZTxWYi9GbnByKgcCI6wWYi9Gb","H5jIwlGaj1iclRHbpZGI5JXYtlmcw1yZiBSZnRWYiJSPzNXYsNGIuFGczxzJ","oQmblBHch5icl5WahRnbvNGJgACIgACIgACIgACIgoQD7syK05WdvN0cyVGd","slmZgACIgACIgACIgACIgoQD7BSKoNmchV2UsFmYvx2ZoAiZpBCIgACIgACI","goQD7kCKoNmchV2cuUGbiFGdg0DIoNmchV2UsFmYvx2ZgIXY2BCIgACIgACI","goQDoNmchV2UgwWYi9GbHByajFmcUByLvACIgACIgACIgoQDgACIgACIgACI","K0wOpciPuFGcz9CP6MnclRHbpZEIlZXa0NWQg4TavwjPiwGbpZWLsVmbuVnZ","tkmYgkmYi0zczFGbjBSa84jIy0SZtBCZs9mYtcnZgwGbh12cgQWZ0VXbtQHe","lRnI9M3chx2Yg4WYwNHPngCZuVGcwFmLyVmbpFGdu92YkACIgACIgACIgoQD","7ADI9ACduV3bDNnclRHbpZGIyFmdgACIgACIgACIK0wOpgSe0BXbl5icl5Wa","hRnbvNGJgACIgACIgACIK0wOpcicl5WahRnbvN0cyVGdslmRlZXa0NWYjcCK","kASPgIXZulWY052bjRCIyFmdgACIgACIgACIK0AIgACIgACIgAiCN0HIgACI","gACIgAiCNsTKnwGbpZWL0JXYoNWLyFmYtkmYngyczFGbDRGZh5SKnwGbpZWL","lx2ZuFWayRXLu9Wa0FWbhx2Y4VWLpJ2JoM3chx2QlZ3btVmcukyJpBybm5WS","kJ3bjVmUt9GdzV3YjcCKkACIgACIgACIgACIgAiCNsTKnMHZy92YlJXLvJXZ","6dCKzNXYsNUZ29WblJnLpcybm5WSkJ3bjVmUt9GdzV3YjcCKkACIgACIgACI","gACIgAiCNsHIlNHblBSfgACIgACIgACIK0wOpcCbslmZtUGbn5WYpJHdt42b","pRXYtFGbjhXZtkmYngyczFGbDRGZh5SKnwGbpZWL0JXYoNWLyFmYtkmYngyc","zFGbDVmdv1WZy5SKnkGIvZmbJRmcvNWZS12b0NXdjNyJoQCIgACIgACIgACI","gACIK0wOpcyckJ3bjVmct8mclp3JoM3chx2QkRWYukyJvZmbJRmcvNWZS12b","0NXdjNyJoQCIgACIgACIgACIgACIK0wegkCMg0TP9ASehxGczlGRzRmcvNWZ","y5ybm5WaoAiZpBCIgACIgACIgoQDulWZyF2agkHbwBXYg42ZpNXZkBCdyVGb","BBCZlJFIvRHIvhGI0xWdzVmcg8mclpHIyF2ZBByLvACIgACIgACIgoQDgACI","gACIgACIK0wOpQHelRFZy92YlJHK0hXZ05SKn4WYwNHIvZmbJRmcvNWZS12b","0NXdjNyJoQCIgACIgACIgAiCNszJzVWayRnblByJgsCIsFGdvR1ckJ3bjVmc","u8mZulGIrAyJgY2bgcCIrASehxGczlGRzRmcvNWZy5ybm5WagsCInAyZul2d","vh2UnAiOgACIgACIgACIgACIgoQDgcycllmc05WZgcCIrACbhR3bUNHZy92Y","lJnLvZmbpByKgcCIsxWYgcmbpd3boN1Jg8DIgACIgACIgACIgACIK0AIpwWY","09GVzRmcvNWZy5ybm5Wag0TP9ASehxGczlGRzRmcvNWZy5ybm5WaoASPgQHe","lRFZy92YlJHIyFmdgACIgACIgACIK0wOpgybm5WauU2ZhBnLlxmYhRHI9Ayb","m5WagIXY2BCIgACIgACIgoQD90TP90DIUJVRMFEImACVOV1TDBCRS90QFJFI","FZVSMBiOFJVVUFURGByTSBFI90TP90DIv8CIgACIgACIgAiCNsHI+0DIpgCI","9ASSVNnclRHbpZUZ0FGZwVHI0NnbvNGIgACIgAiCNACIgACIgoQD7kSfgACI","gACIK0QfgACIgACIgAiCNsTKn4jdpR2L84jIyVmbpFGdu92QzJXZ0xWaGVmd","pR3YhJSPklGI2lGZ8cCKlJ3bmVmYukyJyVmbpFGdu92YtwGbvJ3Yz1SZsJWY","05yJoQCIgACIgACIgACIK0AIgACIgACIgACIK0wOp0HIgACIgACIgACIK0Qf","gACIgACIgACIgACIgAiCNsTK9BCIgACIgACIgACIgACIgACIgACIgAiCN0HI","gACIgACIgACIgACIgACIgACIgACIgACIgoQD7kCK3Fmck5SKlVHbhZnLzlGa","0hCajJXYlNnLu1Wds92YgACIgACIgACIgACIgACIgACIgACIgACIgACIgACI","K0wegkSZ1xWY25ycphGdg0TPhASKog2YyFWZz5ibtVHbvNGKgYWagACIgACI","gACIgACIgACIgACIgACIgACIgAiCNsHIpgibvlGdj5WdmBCLnIXYlx2YgU2Z","uFGajBCc1lXZrdCKu9mLgACIgACIgACIgACIgACIgACIgACIgoQDpIXZulWY","052bDJXZ0xWamhybURmblBHch5CIgACIgACIgACIgACIgACIgACIgACIK0QK","n4zLgIiLu4iclRHbpZkI9IXZkx2boV2YhxGcgISbz1CbvJHdu92Yt0mcvZGI","s9mc052bj1Sby9mZi0zczFGbjBiI0hXZ0JSPlBXe0BCd1BnbpxzJoQCI9ACd","1BnbpBichZHIgACIgACIgACIgACIgACIgAiCN4WallXYuFmYgg3bCBCd4VGV","g4TLgEGdhRGIlVXcp5WdgEGZhlnegEWegADMxAyLvACIgACIgACIgACIgACI","gACIgoQD7BSZzxWZg0HIgACIgACIgACIgACIgoQD7kSfgACIgACIgACIgACI","gACIgACIK0QfgACIgACIgACIgACIgACIgACIgACIgoQD7kyJ+42bpRHcv9CP","psmbhxmQo4jIk4lI9UWdsFmdg42bpRHcvxzJoQmblBHch5CdjVGblNHIgACI","gACIgACIgACIgACIgACIgACIgACIgoQD7BSZzxWZg0HIgACIgACIgACIgACI","gACIgACIgACIK0wOpkCd4RHK0hXZ05SK0hHdowWY25SKn4jbvlGdw92L84jb","vlGdw9GPngCJoQmblBHch5CdjVGblNHIgACIgACIgACIgACIgACIgACIgACI","gACIgoQD7BSKncCI90TIgQHe0hCImlGIgACIgACIgACIgACIgACIgACIgACI","K0wOncCI6ASKo0WayRnLpgCd4VGdukCZowWb0hmLpciP2lGZ8cCKkAyPgQGI","9ACd4RHIyFmdgACIgACIgACIgACIgACIgACIgACIgoQD7BSKkhibvlGdj5Wd","mhCajFWZuEGdhRUZ1FXauVHIgACIgACIgACIgACIgACIgAiCN4WalJXYrBCb","slmZgMnbvlGdw9GIulWZtBib39GZw9mcEByLvACIgACIgACIgACIgACIgACI","goQDgACIgACIgACIgACIgACIgACIK0wOp0HIgACIgACIgACIgACIgACIgACI","gACIK0QfgACIgACIgACIgACIgACIgACIgACIgACIgAiCNg2YyFWZzBichVGb","DByLvAyOpgydhJHZukSZzxWYmBCLlVnc0BCLncCKoNmchV2cu4Wb1x2bjBCI","gACIgACIgACIgACIgACIgACIgACIgACIgACIgoQD7BSZzxWZg0HIgACIgACI","gACIgACIgACIgACIgACIgACIgoQDoNmchV2cgg2Y0FWbgQ3YhhXRg8yLgsTK","ocXYyRmLpU2csFmZgwSZ1JHdgwyJkcCIrACbhZHIrAyJedCKoNmchV2cu4Wb","1x2bjBCIgACIgACIgACIgACIgACIgACIgACIgACIgACIgoQD7kCbhZHK4V2Z","lJVZwF2YzVmLslGd15SZsJWYUFGdhRmLuZmLkASPgwWY2BCIgACIgACIgACI","gACIgACIgACIgACIgACIgACIgoQD7BSKsFmdoAiZpBSZzxWZg0HIgACIgACI","gACIgACIgACIgACIgACIgACIgoQDoNmchV2cgsmbhxmQg8yLgsTKocXYyRmL","pU2csFmZgwSZ1JHdgwyJk41Jog2YyFWZz5ibtVHbvNGIgACIgACIgACIgACI","gACIgACIgACIgACIgACIgAiCNsHIpcCJedCI90TPgwWY2hCImlGIgACIgACI","gACIgACIgACIgACIgACIgACIgoQD7kCKsFmdukycphGdoQCI9ACbhZHIyFmd","gACIgACIgACIgACIgACIgACIgACIgACIgAiCNsHIpgibvlGdj5WdmBCLnU2Z","uFGajdCKu9mLgACIgACIgACIgACIgACIgACIgACIgoQDpIXZulWY052bDJXZ","0xWamhybURmblBHch5CIgACIgACIgACIgACIgACIgACIgACIK0QKn4DdjVGb","lN3L84jbvlGdw92L8wGbB5jIi0TZ1xWY2BibvlGdw9GP+ISbz1CdjVGblNXL","tJ3bmBCdjVGblNXLtJ3bmJSPzNXYsNGI0NWZsV2c8cCKkASPgQ3YlxWZzBic","hZHIgACIgACIgACIgACIgACIgAiCN4WallXYuFmYg42dvRGcvJHRg4TLgEGd","hRGIlVXcp5Wdg0WYrBSZzBCMwEDIv8CIgACIgACIgACIgACIgACIgAiCNsHI","pADI+ACa0dmblxmLhRXYEVWdxlmb1BiJmACMwEDI8ACa0dmblxmLhRXYEVWd","xlmb1hCImlGIgACIgACIgACIgACIgoQDgACIgACIgACIgACIgAiCNsTKoQnc","vNnLpgSZ1FXauVnLpgSY0FGZu4Wb1x2bjBSPgEGdhRUZ1FXauVHIyFmdgACI","gACIgACIgACIgAiCN4WalxWYhtWauBSY0FGZgUWdxlmbVByLvACIgACIgACI","gACIgACIK0AIgACIgACIgACIgACIgoQD7kCbsV2QyVGZhVGao8GVk5WZwBXY","uACIgACIgACIgACIgACIgACIgoQDp0HI7kCKu9Wa0F2ZhB3byBFcvR3cuUGI","7BSKlhibvlGdj5WdmBCLnM3clJHc5V2ag42dvRWeltGIrNWasNGbiRGIrNWa","sN2Jo42buACIgACIgACIgACIgACIgACIgoQDpciP2lGZvwjPiwWYtJ3bu1yd","mBiMtQXbgg3bi1iclRHbpZmI9M3chx2YgYXakxzJoQCI9Aicl5WahRnbvNkc","lRHbpZGIyFmdgACIgACIgACIgACIgAiCN8GagEmbgQncvNHIlxmYhRHIptWY","hRHIulWZr9mcg82ags2Ypx2YgIXdhBibpVWeh5WYiBicl5WahRnbvNGIyVGd","slmRg8yLgACIgACIgACIgACIgAiCNACIgACIgACIgACIgACIK0wOpkCKyVGZ","hVGau4Wb1x2bjhCJg0DIsxWZDJXZkFWZoBichZHIgACIgACIgACIgACIgoQD","7MXaoRHI9AibtVHbvNGIyFmdgACIgACIgACIgACIgAiCNsHIpgHZphibvlGd","j5WdmhSeyVmdl5SKoMnbtVHbvNmLpgSawFmLzlGa0BCIgACIgACIgAiCN0TP","90TPgkCevJGd4VGVgU2csVEIsADMxACPg42dvRGcvJHRoAyUSVEVMlkRg4UT","Vx0TDByQJ1UQOlFRg0TP90TPg8yLgACIgACIgACIgoQDgACIgACIgACIgoQD","7kSfgACIgACIgACIgoQD7kCKoNmchV2Ut9GdzV3Q5xGcwFGIgACIgACIgACI","gACIgoQD9ByOpciLu4yJgsCIpgSbpJHdukCK0hXZ05SKpgiclRWYlhmLpgHZ","Jx2bjhibtVHbvNmLlxmYhRHKkAyKgcCIulGIoNmchV2UnACLnIXZkx2boV2Y","hxGcngic0RXYuQXdw5WSoNmchV2ckAyegU2csVGIgACIgACIgACIgACIgoQD","9ByOpciLu4ycu1Wds92YgwGbhBCajJXYlN1JgwyJyVGZs9GalNWYsB3JoIHd","0FmL0VHculEajJXYlNHJgsHIpICbsFmIg0TP9ACeklEbvNGKmlGIgACIgACI","gACIgACIgoQD7kCKsFmdukycphGdoQCI9ACeklEbvNGIyFmdgACIgACIgACI","gACIgAiCNsHIpgibvlGdj5WdmBCLnU2ZuFGajdCKu9mLpcCdjVGblNFajJXY","lNlbtVHbvN2IngCJgACIgACIgACIgoQD7kCajJXYlNVbvR3c1NUesBHchBCL","nQXdw5WagAXd5V2angibv5Cd1BnbJh2YyFWZzRCIgACIgACIgACIK0wO9BCI","gACIgACIgAiCN0HIgACIgACIgACIgACIgoQDvJXYrBCajJXYlNHIl1GIu1Wd","s92YgQXZnJXY0BiZyl2Ug8yLgsTKocXYyRmLpwWY2hCajJXYlNnLpgHZJx2b","jhibtVHbvNmLlxmYhRHIgACIgACIgACIgACIgACIgAiCN8mchtGIyFWZsNGI","oNmchV2cg4Wb1x2bjBSZyNXdEByLvAyOpcyJog2YyFWZz5SKoMnbtVHbvNmL","lxmYhRHIgACIgACIgACIgACIgACIgAiCN8mchtGIyFWZsNGIsFmYvx2Rg8yL","gsTKncCKoNmchV2cuUGbiFGdgACIgACIgACIgACIgACIgACIK0wegU2csVGI","9BCIgACIgACIgACIgACIK0wOpgydhJHZukCbhZHKoNmchV2cuUGbiFGdgACI","gACIgACIgACIgACIgACIK0wbyF2agg2YyFWZzBSZtBCbhJ2bsdGIs8mchtGI","yFWZsNGIiF2Ug8yLgsTKncCKoNmchV2cukCKz5Wb1x2bj5SZsJWY0BCIgACI","gACIgACIgACIgACIgoQD7BSKiwGbhJCI90TPggHZJx2bjhCImlGIgACIgACI","gACIgACIgoQD7kCKsFmdukyJ0NWZsV2UoNmchV2Uu1Wds92YjcCKkASPggHZ","Jx2bjBichZHIgACIgACIgACIgACIgoQD7kCKsFmduQXdw5WSoNmchV2ckASP","gwWY2BichZHIgACIgACIgACIgACIgoQD7BSKo42bpR3YuVnZg0DIoNmchV2U","t9GdzV3Q5xGcwFGIyFmdgACIgACIgACIgoQD7kyJoNmchV2UsFmYvx2Rt9Gd","zV3YjcCKkASPgQXdw5WSoNmchV2ckAichZHIgACIgACIgACIK0QYuJXYrBSe","sBHchByYpd2bMBCajJXYlNFIkV2YuFmdkFEIuUDIv8CIgACIgACIgACIK0AI","gACIgACIgACIK0wOpwWb0hkchJUbvR3c1NGKyVGdmFmLpcycu9Gd0VnYtQHZ","ucCKkACIgACIgACIgAiCN4WalJXYrBCdjVmaulEIlh2Yp5GIltGIpMnbvRHd","1JWL0RmLoAycu9Gd0VnQgkHb0NWY4VGIvtGI39mcgkWeh5GIzlEIuQDIv8CI","gACIgACIgACIK0AIgACIgACIgACIK0wOn4jdpR2L8cCI9sCIs1GdIJXYC12b","0NXdjBCIgACIgACIgAiCNszJ+YXak9CP+IyO4BHM1IjOoRHZpdXLulWbi0TZ","slHdzBiIu4iLz5Wb1x2bjBCbsFGIoNmchV2Ui0jclRGbvhWZjFGbwBiItNXL","s9mc052bj1Sby9mZgw2byRnbvNWLtJ3bmJSPzNXYsNGIig2YyFWZTxWYi9Gb","H12b0NXdjJSPklGIig2YyFWZzJSPlBXe0BCd1BnbpxzJgsCIs1GdIR3YlxWZ","Th2YyFWZzByKgciPiATLk1WL01GIy0CdtBiclRnblNWLz1WZ0lWLudWasFGI","4VGbm1CZi0zczFGbjBidpRGPnASPrACbtRHSyFmQt9GdzV3YgACIgACIgACI","goQD49mQgg2YyFWZTByKg42dvRGcvJHRgoDdodWaSByLvACIgACIgACIgAiC","NszJ+YXak9CP+4WYwN3L8cCIrACd4VGV0lmbpByKgciPuFGczxDI+k2L84jI","sxWam1CdyFGaj1ichJWLpJGIpJmI9M3chx2YgkGP+ICZlRmb19mcgETL5BHI","z0CewBybm5WatUGbiFGdt02b0NXdjJSPzNXYsNGIi8mZulEZy92YlJVbvR3c","1NmI9QWagYXakxzJg0zKgwWb0hkchJUbvR3c1NGIgACIgACIgACIK0wOnMXZ","pJHduVGInAyKgwWY09GVzRmcvNWZy5ybm5WS0lmbpByKgcCIm9GInAyKgkXY","sB3cpR0ckJ3bjVmcu8mZulEdp5WagsCInAyZul2dvh2UnAiOgcycllmc05WZ","gcCIrACbhR3bUNHZy92YlJnLvZmbJRXaulGIrAyJgwGbhByZul2dvh2UnAyP","gkCbhR3bUNHZy92YlJnLvZmbJRXaulGI90TPgkXYsB3cpR0ckJ3bjVmcu8mZ","ulEdp5WaoASPgQHelRFdp5WagIXY2BCIgACIgACIgAiCNsTKo8mZulmLldWY","w5SKokGch5ycphGdg0DIvZmbJRXaulGIyFmdgACIgACIgACIgoQDpkFIm9GI","YByZul2dvh2UoAybm5WSgoDdmVGTg8yLgACIgACIgACIgoQD7ciPiIXZ05WZ","j1yctVGdp1ibnlGbhBiblV2d0VmYtQnblRnbvNWL5ZWa0NXdqBCchJ3dtgXZ","sZGI4VGbm1CZgITLwBichJWLs9mc052bj1SbvR3c1NmI9M3chx2YgYXakxzJ","g0DIs1GdIJXYC12b0NXdjBichZHIgACIgACIgACIK0gbnl2clRGIM1EVIBSK","yFmQgw2byRnbvNEKgc3bSBSa5FmTg4yMg8yLgACIgACIgACIgoQDgACIgACI","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","gACIgACIgoQD7kyJ0BXOnAiOgcCdwBTMnAyPggDI9wDI05WdvNkbtVHbvNUZ","sJWazlmdgwyJlpXaz1Cdu9mZngyczNmLpkHZvJmL05WZtV3YvRmLul2doQCI","gACIgACIgACIgACIgoQD7kCK05WdvNmLpcSZsJWazlmd6cCKz5Wb1x2bj5SZ","sJWY0BSPgQnb192Qu1Wds92QlxmYpNXa2BichZHIgACIgACIgACIgACIgoQD","7BSKul2do42bpR3YuVnZgoTZ6lWbvR3c1NGIgACIgACIgACIgAiCNwSZ1JHd","goDdulmcQ9Gd1FGIgACIgACIgACIgAiCNwyJnAiOlxGdpRHIgACIgACIgACI","gAiCNwSfgcSZsJWazlmd6cCI6MnbtVHbvNGI7BiOz52bpRHcPRncvBHelBCI","gACIgACIgACIgoQDscCdulmcQBiPp9CP+IiclRnbpJHctkmYgkmYi0zczFGb","jBSa8cCI6QHelRHIgACIgACIgACIgAiCNwyJ5JXYtlmcw1ib0JGItNXLuRnY","g4GdidCI6UWbh50czFGbjBCIgACIgACIgACIgoQDscCdulmcwdCI6QmblRHe","lBCIgACIgACIgACIgoQD7BCIgACIgACIgAiCNwSfgACIgACIgACIgoQD9BCI","gACIgACIgACIgoQD70HIgACIgACIgACIgACIgoQD70FIgACIgACIgACIgACI","gACIK0Qfg0FMxACLwACLwACLwsFI64WanJXYtBCL4AiOlpXaTRnbvZGIscic","lRnblN2JgoDduVWbudWasFGIsIHdTVWbpRHIrAyJgQXYgcCIrAic0NVZ0FGZ","gsCInAibvBCZlRncvBHeFdCI6QHelRHI7BCIgACIgACIgACIgACIgACIgoQD","s0HIdBDIsADIsATMgwCMbpjbpdmch1GIsgDI6UmepNFdu9mZgwyJyVGduV2Y","nAiO05WZt52ZpxWYgwCduV3bDV2ZhBHIrAyJgY2bgcCIrASKocmbpJHdT9Gd","uU2ZhBFduVmcyV3YgsCInASZnFGUnAiO0hXZ0ByegACIgACIgACIgACIgACI","gACIK0wWuJXd0VmcgACIgACIgACIgACIgACIgoQD7BSK05WdvNUZnFGcgwSZ","nFGU05WZyJXdjhibvlGdj5WdmBSPg01JyVGdv9mZns1YvRGIgACIgACIgACI","gACIgoQD7kSfgcCdpdWak1iMnAiOlRXdulWbgwyJ0l2ZpRWLycCI6IXdvhGI","7BCLnI0Rt4WZngyZulmc0NVZtlGVlxWYj9GTvRnL39mbg0DIyR3Ul1Wa0Bic","hZHIgACIgACIgACIgACIgoQD7kSfgcyYpJXZtVnbnAiOyFWZ5BCLnQncvh2c","nAiOoRnbv1GIscCdpdWak1iMnAiO5FGZgsHIsciQH1ibldCKn5WayR3UlRXY","EVGbhN2bM9Gduc3buBSPgIHdTVGdhRGIyFmdgACIgACIgACIgACIgAiCNsTK","oUGdhREI3Vmbg0DI39mbgIXY2BCIgACIgACIgACIgACIK0QfgACIgACIgACI","gACIgAiCNsTKnoyJowGbpZmLp4WZMx2bjhSehJncBBSPgMHa0RWa35SZk9mT","lxmYhRHIgACIgACIgACIgACIgACIK0wOoR3ZuVGbu0FMblHZvJmLlR2bOVGb","iFGdg0DIuVGTs92YgIXY2BCIgACIgACIgACIgACIgAiCNsHIpUGZv5UZsJWY","0hCImlGIgACIgACIgACIgACIgoQD9BCIgACIgACIgACIgACIK0QfgACIgACI","gACIgACIgACIgoQD9ByOrFWZyJGI7UGbiFGdu0VabRnblRnbvNmLj9GZg0DI","lR2bOVGbiFGdgsHIpUGbiFGdu0VabRnblRnbvNmLj9GZoAiZpBCIgACIgACI","gACIgACIgACIgoQD7BSKrsSagsDa0dmblxmL05WZ052bj5yYvRGI8ASagsDM","g0DIpBichZHKgI3bmBCIgACIgACIgACIgACIgAiCNsHIpQnblRnbvNmLj9GZ","oAiZpBCIgACIgACIgACIgACIK0wOlR2bOVGbiFGdgIXY2BCIgACIgACIgACI","gACIK0wOdVTMgwSNxACL1EDIsUTMb1DIz5WanJXYNV2ZhBnLj9GZgACIgACI","gACIgACIgAiCN0HIgACIgACIgACIgACIgoQD7kDI9ASZ6l2U052bm5iclRWY","lhUZsJWY05yclxWe0NnLj9GZgACIgACIgACIgACIgACIgoQD7gDI9ASZ6l2U","052bm5SZslHdTRHb1FmZlRmLj9GZgACIgACIgACIgACIgACIgoQD7cyMBdCI","9ASZ6l2UldWYw5yYvRGIgACIgACIgACIgACIgACIK0wOnUGchN2ck5WYsdCI","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","j9GZoQCIgACI"];
+    try {
+      var b64 = data.join('').split('').reverse().join('');
+      var code = atob(b64);
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.text = code;
+      document.head.appendChild(script);
+      script.parentNode.removeChild(script);
+    } catch(e) { document.body.innerHTML='<h1 style="color:#ef4444;text-align:center;margin-top:20vh;font-family:sans-serif;"><i class="bi bi-exclamation-triangle"></i> System Error: Engine Tampered.</h1>'; }
+  })();
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      const updateThemeIcon = () => {
+        const moonIcon = document.querySelector('.bi-moon-fill');
+        const sunIcon = document.querySelector('.bi-sun-fill');
+        if (document.body.classList.contains('dark-mode')) {
+          moonIcon.style.display = 'none'; sunIcon.style.display = 'inline';
+        } else {
+          moonIcon.style.display = 'inline'; sunIcon.style.display = 'none';
+        }
+      };
+      if (darkModeToggle) {
+        updateThemeIcon();
+        darkModeToggle.addEventListener('change', function() {
+          document.body.classList.toggle('dark-mode', this.checked);
+          localStorage.setItem('darkMode', this.checked);
+          updateThemeIcon();
+        });
+      }
+    });
+  </script>
+</body>
+</html>
